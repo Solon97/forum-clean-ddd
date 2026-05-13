@@ -5,6 +5,16 @@ import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 
 export default defineConfig([
   eslint.configs.recommended,
-  ...tseslint.configs.recommended,
+  ...tseslint.configs.recommendedTypeChecked,
+  {
+    languageOptions: {
+      parserOptions: {
+        projectService: {
+          allowDefaultProject: ['eslint.config.js'],
+        },
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
   eslintPluginPrettierRecommended,
 ]);

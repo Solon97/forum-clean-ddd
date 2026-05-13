@@ -1,4 +1,3 @@
-import { expect, test } from 'vitest';
 import { UniqueEntityId } from './index.js';
 
 test('should be able to create a unique entity ID', () => {

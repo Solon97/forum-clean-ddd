@@ -1,4 +1,3 @@
-import { expect, test } from 'vitest';
 import { Slug } from './index.js';
 
 test('should be able to create a slug from a text', () => {
