@@ -12,7 +12,7 @@ export class UniqueEntityId {
     const regex =
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!regex.test(value)) {
-      throw new Error("Invalid Unique Entity ID");
+      throw new Error('Invalid Unique Entity ID');
     }
   }
 }

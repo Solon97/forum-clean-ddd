@@ -2,16 +2,16 @@ export class Slug {
   private constructor(readonly value: string) {}
 
   static createFromText(text: string) {
-    return new Slug(Slug.normalize(text))
+    return new Slug(Slug.normalize(text));
   }
 
   static createFromExistingSlug(value: string) {
-    if (!Slug.isValid(value)) throw new Error('Invalid slug')
-    return new Slug(value)
+    if (!Slug.isValid(value)) throw new Error('Invalid slug');
+    return new Slug(value);
   }
 
   private static isValid(value: string) {
-    return Slug.normalize(value) === value
+    return Slug.normalize(value) === value;
   }
 
   private static normalize(text: string) {
@@ -28,6 +28,6 @@ export class Slug {
         .replace(/--+/g, '-')
         // Remove leading or trailing hyphens
         .replace(/^-+|-+$/g, '')
-    )
+    );
   }
 }

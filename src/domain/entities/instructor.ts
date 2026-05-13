@@ -1,11 +1,11 @@
-import { BaseEntity } from './base-entity'
+import { BaseEntity } from './base-entity';
 
 export interface InstructorProps {
-  name: string
+  name: string;
 }
 
 export class Instructor extends BaseEntity<InstructorProps> {
   get name() {
-    return this.props.name
+    return this.props.name;
   }
 }
