@@ -11,9 +11,11 @@
     "target": "esnext",
     // For nodejs:
     "lib": ["esnext"],
-    "types": ["node"],
+    "types": ["node", "vitest/globals"],
     // and npm install -D @types/node
-
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     // Other Outputs
     "sourceMap": true,
     "declaration": true,
