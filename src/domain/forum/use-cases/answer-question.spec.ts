@@ -1,23 +1,35 @@
+import { InMemoryAnswerRepository } from '../../../../test/repositories/in-memory-answer-repository';
+import { UniqueEntityId } from '../entities/value-objects/unique-entity-id';
 import { AnswerQuestionUseCase } from './answer-question';
-import type { AnswerRepository } from '@/domain/repositories/answer-repository';
+import type { AnswerRepository } from '@/domain/forum/repositories/answer-repository';
 
-const mockAnswerRepository: AnswerRepository = {
-  create: vitest.fn().mockResolvedValue(undefined),
-};
+let inMemoryAnswerRepository: AnswerRepository;
+let answerQuestionUseCase: AnswerQuestionUseCase;
 
-test('create an answer', async () => {
-  // Given
-  const useCase = new AnswerQuestionUseCase(mockAnswerRepository);
-  const input = {
-    questionId: crypto.randomUUID(),
-    instructorId: crypto.randomUUID(),
-    content: 'This is an answer to the question.',
-  };
+describe('Create Answer', () => {
+  beforeEach(() => {
+    inMemoryAnswerRepository = new InMemoryAnswerRepository();
+    answerQuestionUseCase = new AnswerQuestionUseCase(inMemoryAnswerRepository);
+  });
 
-  // When
-  const answer = await useCase.execute(input);
+  test('should be able to create an answer', async () => {
+    const createSpy = vi.spyOn(inMemoryAnswerRepository, 'create');
+    const questionId = new UniqueEntityId().toString();
+    const instructorId = new UniqueEntityId().toString();
+    const input = {
+      questionId,
+      instructorId,
+      content: 'This is an answer to the question.',
+    };
 
-  // Then
-  expect(answer).toBeDefined();
-  expect(answer.content).toBe(input.content);
+    const output = await answerQuestionUseCase.execute(input);
+
+    expect(createSpy).toHaveBeenCalled();
+    expect(createSpy).toHaveBeenCalledTimes(1);
+    expect(output).toBeTruthy();
+    expect(output.answer.id).toBeTruthy();
+    expect(output.answer.content).toBe(input.content);
+    expect(output.answer.questionId.toString()).toBe(input.questionId);
+    expect(output.answer.authorId.toString()).toBe(input.instructorId);
+  });
 });

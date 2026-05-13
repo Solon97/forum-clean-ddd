@@ -15,4 +15,8 @@ export class UniqueEntityId {
       throw new Error('Invalid Unique Entity ID');
     }
   }
+
+  toString() {
+    return this.value;
+  }
 }
