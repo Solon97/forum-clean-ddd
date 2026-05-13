@@ -1,3 +1,5 @@
+import { Mock } from 'vitest';
+import { assertRepositorySpyCalled } from '../../../../test/helpers/spy-helpers';
 import { InMemoryAnswerRepository } from '../../../../test/repositories/in-memory-answer-repository';
 import { UniqueEntityId } from '../entities/value-objects/unique-entity-id';
 import { AnswerQuestionUseCase } from './answer-question';
@@ -5,15 +7,16 @@ import type { AnswerRepository } from '@/domain/forum/repositories/answer-reposi
 
 let inMemoryAnswerRepository: AnswerRepository;
 let answerQuestionUseCase: AnswerQuestionUseCase;
+let sutRepositorySpy: Mock<typeof inMemoryAnswerRepository.create>;
 
 describe('Create Answer', () => {
   beforeEach(() => {
     inMemoryAnswerRepository = new InMemoryAnswerRepository();
     answerQuestionUseCase = new AnswerQuestionUseCase(inMemoryAnswerRepository);
+    sutRepositorySpy = vi.spyOn(inMemoryAnswerRepository, 'create');
   });
 
   test('should be able to create an answer', async () => {
-    const createSpy = vi.spyOn(inMemoryAnswerRepository, 'create');
     const questionId = new UniqueEntityId().toString();
     const instructorId = new UniqueEntityId().toString();
     const input = {
@@ -24,8 +27,7 @@ describe('Create Answer', () => {
 
     const output = await answerQuestionUseCase.execute(input);
 
-    expect(createSpy).toHaveBeenCalled();
-    expect(createSpy).toHaveBeenCalledTimes(1);
+    assertRepositorySpyCalled(sutRepositorySpy);
     expect(output).toBeTruthy();
     expect(output.answer.id).toBeTruthy();
     expect(output.answer.content).toBe(input.content);
