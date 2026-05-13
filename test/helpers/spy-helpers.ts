@@ -9,3 +9,7 @@ export function assertRepositorySpyCalled(
   expect(spy).toHaveBeenCalledTimes(times);
   expect(spy).toHaveBeenCalledWith(withArgs);
 }
+
+export function assertRepositorySpyNotCalled(spy: Mock): void {
+  expect(spy).not.toHaveBeenCalled();
+}
