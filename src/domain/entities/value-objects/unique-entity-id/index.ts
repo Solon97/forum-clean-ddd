@@ -1,17 +1,18 @@
 export class UniqueEntityId {
-  readonly value: string
+  readonly value: string;
 
   constructor(value?: string) {
     if (value) {
-      this.validate(value)
+      this.validate(value);
     }
-    this.value = value ?? crypto.randomUUID()
+    this.value = value ?? crypto.randomUUID();
   }
 
   private validate(value: string) {
-    const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    const regex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!regex.test(value)) {
-      throw new Error('Invalid Unique Entity ID')
+      throw new Error("Invalid Unique Entity ID");
     }
   }
 }
