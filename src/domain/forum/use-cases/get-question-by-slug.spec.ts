@@ -8,7 +8,6 @@ import { assertRepositorySpyCalled } from '../../../../test/helpers/spy-helpers'
 let inMemoryQuestionRepository: QuestionRepository;
 let sut: GetQuestionBySlugUseCase;
 let sutRepositorySpy: Mock<typeof inMemoryQuestionRepository.findBySlug>;
-const exampleQuestion = makeQuestion();
 
 describe('Get Question by Slug', () => {
   beforeEach(() => {
@@ -18,6 +17,7 @@ describe('Get Question by Slug', () => {
   });
 
   it('should be able to get a question by slug', async () => {
+    const exampleQuestion = makeQuestion();
     await inMemoryQuestionRepository.create(exampleQuestion);
 
     const { question } = await sut.execute({
