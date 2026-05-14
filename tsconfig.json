@@ -14,7 +14,8 @@
     "types": ["node", "vitest/globals"],
     // and npm install -D @types/node
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@test/*": ["./test/*"]
     },
     // Other Outputs
     "sourceMap": true,
