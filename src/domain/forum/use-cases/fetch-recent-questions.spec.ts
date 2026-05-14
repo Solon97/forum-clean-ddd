@@ -16,7 +16,7 @@ describe('Fetch Recent Questions', () => {
   });
 
   it('should be able to fetch recent questions', async () => {
-    await sut.execute({ page: 1 });
+    await sut.execute({ paginationParams: { page: 1 } });
     assertRepositorySpyCalled(sutRepositorySpy, { page: 1 });
   });
 });

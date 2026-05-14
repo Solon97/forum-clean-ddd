@@ -24,6 +24,10 @@ export class InMemoryAnswerRepository implements AnswerRepository {
     return Promise.resolve(answer || null);
   }
 
+  async findManyByQuestionId(): Promise<Answer[]> {
+    return Promise.resolve(this.items);
+  }
+
   async delete(answer: Answer): Promise<void> {
     const index = this.items.findIndex(
       (item) => item.id.value === answer.id.value,

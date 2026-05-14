@@ -7,7 +7,12 @@ export function assertRepositorySpyCalled(
 ): void {
   expect(spy).toHaveBeenCalled();
   expect(spy).toHaveBeenCalledTimes(times);
-  expect(spy).toHaveBeenCalledWith(withArgs);
+
+  if (Array.isArray(withArgs)) {
+    expect(spy).toHaveBeenCalledWith(...(withArgs as unknown[]));
+  } else {
+    expect(spy).toHaveBeenCalledWith(withArgs);
+  }
 }
 
 export function assertRepositorySpyNotCalled(spy: Mock): void {

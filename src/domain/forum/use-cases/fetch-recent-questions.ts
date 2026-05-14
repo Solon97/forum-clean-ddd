@@ -1,8 +1,9 @@
+import { PaginationParams } from '@/shared/domain/repositories/pagination-params';
 import { Question } from '../entities/question';
 import { QuestionRepository } from '../repositories/question-repository';
 
 interface FetchRecentQuestionsUseCaseInput {
-  page: number;
+  paginationParams: PaginationParams;
 }
 
 interface FetchRecentQuestionsUseCaseOutput {
@@ -13,9 +14,10 @@ export class FetchRecentQuestionsUseCase {
   constructor(private questionRepository: QuestionRepository) {}
 
   async execute({
-    page,
+    paginationParams,
   }: FetchRecentQuestionsUseCaseInput): Promise<FetchRecentQuestionsUseCaseOutput> {
-    const questions = await this.questionRepository.findManyRecent({ page });
+    const questions =
+      await this.questionRepository.findManyRecent(paginationParams);
     return {
       questions,
     };
