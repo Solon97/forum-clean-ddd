@@ -1,5 +1,6 @@
 import { QuestionComment } from '@/domain/forum/entities/comment';
 import { QuestionCommentRepository } from '@/domain/forum/repositories/question-comment-repository';
+import { PaginationParams } from '@/shared/domain/repositories/pagination-params';
 
 export class InMemoryQuestionCommentRepository implements QuestionCommentRepository {
   private items: QuestionComment[] = [];
@@ -7,6 +8,16 @@ export class InMemoryQuestionCommentRepository implements QuestionCommentReposit
   create(comment: QuestionComment): Promise<void> {
     this.items.push(comment);
     return Promise.resolve();
+  }
+
+  findManyByQuestionId(
+    params: PaginationParams,
+    questionId: string,
+  ): Promise<QuestionComment[]> {
+    const comments = this.items
+      .filter((comment) => comment.questionId.toString() === questionId)
+      .slice((params.page - 1) * 20, params.page * 20);
+    return Promise.resolve(comments);
   }
 
   update(question: QuestionComment): Promise<void> {
