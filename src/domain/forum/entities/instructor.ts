@@ -1,4 +1,4 @@
-import { BaseEntity } from './base-entity';
+import { BaseEntity } from '@/shared/domain/entities/base-entity';
 
 export interface InstructorProps {
   name: string;

@@ -1,5 +1,5 @@
 import { Answer, AnswerProps } from '@/domain/forum/entities/answer';
-import { UniqueEntityId } from '@/domain/forum/entities/value-objects/unique-entity-id';
+import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
 
 export function makeAnswer(
   override: Partial<AnswerProps> = {},

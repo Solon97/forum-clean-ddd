@@ -1,5 +1,5 @@
-import { BaseEntityWithTimestamps } from './base-entity.js';
-import { UniqueEntityId } from './value-objects/unique-entity-id/index.js';
+import { BaseEntityWithTimestamps } from '@/shared/domain/entities/base-entity';
+import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id/index';
 
 export interface AnswerProps {
   questionId: UniqueEntityId;

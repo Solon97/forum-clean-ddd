@@ -1,7 +1,10 @@
+import {
+  BaseEntityWithTimestamps,
+  Timestamps,
+} from '@/shared/domain/entities/base-entity';
+import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id/index.js';
 import { Optional } from '@/types/optional.js';
-import { BaseEntityWithTimestamps } from './base-entity.js';
 import { Slug } from './value-objects/slug/index.js';
-import { UniqueEntityId } from './value-objects/unique-entity-id/index.js';
 
 export interface QuestionProps {
   authorId: UniqueEntityId;
@@ -12,7 +15,10 @@ export interface QuestionProps {
 }
 
 export class Question extends BaseEntityWithTimestamps<QuestionProps> {
-  constructor(props: Optional<QuestionProps, 'slug'>, id?: UniqueEntityId) {
+  constructor(
+    props: Optional<QuestionProps, 'slug'> & Partial<Timestamps>,
+    id?: UniqueEntityId,
+  ) {
     const slug = props.slug || Slug.createFromText(props.title);
     super({ ...props, slug }, id);
   }

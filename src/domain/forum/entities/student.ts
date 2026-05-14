@@ -1,4 +1,4 @@
-import { BaseEntity } from './base-entity.js';
+import { BaseEntity } from '@/shared/domain/entities/base-entity';
 
 export interface StudentProps {
   name: string;

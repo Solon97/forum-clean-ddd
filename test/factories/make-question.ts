@@ -1,8 +1,9 @@
 import { Question, QuestionProps } from '@/domain/forum/entities/question';
-import { UniqueEntityId } from '@/domain/forum/entities/value-objects/unique-entity-id';
+import { Timestamps } from '@/shared/domain/entities/base-entity';
+import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
 
 export function makeQuestion(
-  override: Partial<QuestionProps> = {},
+  override: Partial<QuestionProps & Timestamps> = {},
   id?: UniqueEntityId,
 ): Question {
   const question: Question = new Question(

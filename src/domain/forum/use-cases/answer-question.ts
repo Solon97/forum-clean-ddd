@@ -1,5 +1,5 @@
 import { Answer } from '../entities/answer.js';
-import { UniqueEntityId } from '../entities/value-objects/unique-entity-id/index.js';
+import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id/index.js';
 import type { AnswerRepository } from '../repositories/answer-repository.js';
 
 export interface AnswerQuestionUseCaseInput {

@@ -1,6 +1,6 @@
 import { UniqueEntityId } from './value-objects/unique-entity-id';
 
-type Timestamps = {
+export type Timestamps = {
   createdAt: Date;
   updatedAt?: Date;
 };
