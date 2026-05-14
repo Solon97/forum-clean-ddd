@@ -2,7 +2,7 @@ import { AnswerRepository } from '../repositories/answer-repository';
 
 interface DeleteAnswerUseCaseInput {
   answerId: string;
-  authorId?: string;
+  authorId: string;
 }
 
 export class DeleteAnswerUseCase {

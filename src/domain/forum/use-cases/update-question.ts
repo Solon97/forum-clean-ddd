@@ -1,21 +1,27 @@
 import { QuestionRepository } from '../repositories/question-repository';
 
-interface DeleteQuestionUseCaseInput {
-  questionId: string;
+interface UpdateQuestionUseCaseInput {
   authorId: string;
+  questionId: string;
+  title: string;
+  content: string;
 }
 
-export class DeleteQuestionUseCase {
+export class UpdateQuestionUseCase {
   constructor(private questionRepository: QuestionRepository) {}
 
   async execute({
     questionId,
     authorId,
-  }: DeleteQuestionUseCaseInput): Promise<void> {
+    title,
+    content,
+  }: UpdateQuestionUseCaseInput): Promise<void> {
     const question = await this.questionRepository.findById(questionId);
     if (!question || question.authorId.toString() !== authorId) {
       throw new Error('Question not found');
     }
-    await this.questionRepository.delete(question);
+    question.title = title;
+    question.content = content;
+    await this.questionRepository.update(question);
   }
 }

@@ -8,6 +8,16 @@ export class InMemoryQuestionRepository implements QuestionRepository {
     return Promise.resolve();
   }
 
+  async update(question: Question): Promise<void> {
+    const index = this.items.findIndex(
+      (item) => item.id.value === question.id.value,
+    );
+    if (index !== -1) {
+      this.items[index] = question;
+    }
+    return Promise.resolve();
+  }
+
   async findBySlug(slug: string): Promise<Question | null> {
     const question = this.items.find((item) => item.slug.value === slug);
     return Promise.resolve(question || null);
