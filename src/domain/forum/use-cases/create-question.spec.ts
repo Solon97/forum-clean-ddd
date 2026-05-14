@@ -1,9 +1,9 @@
 import { Mock } from 'vitest';
-import { InMemoryQuestionRepository } from '../../../../test/repositories/in-memory-question-repository';
+import { InMemoryQuestionRepository } from '@test/repositories/in-memory-question-repository';
 import { UniqueEntityId } from '../entities/value-objects/unique-entity-id';
 import { QuestionRepository } from '../repositories/question-repository';
 import { CreateQuestionUseCase } from './create-question';
-import { assertRepositorySpyCalled } from '../../../../test/helpers/spy-helpers';
+import { assertRepositorySpyCalled } from '@test/helpers/spy-helpers';
 
 let inMemoryQuestionRepository: QuestionRepository;
 let sut: CreateQuestionUseCase;

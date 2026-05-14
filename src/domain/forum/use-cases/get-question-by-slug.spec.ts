@@ -1,9 +1,9 @@
 import { Mock } from 'vitest';
-import { makeQuestion } from '../../../../test/factories/make-question';
-import { InMemoryQuestionRepository } from '../../../../test/repositories/in-memory-question-repository';
+import { makeQuestion } from '@test/factories/make-question';
+import { InMemoryQuestionRepository } from '@test/repositories/in-memory-question-repository';
 import { QuestionRepository } from '../repositories/question-repository';
 import { GetQuestionBySlugUseCase } from './get-question-by-slug';
-import { assertRepositorySpyCalled } from '../../../../test/helpers/spy-helpers';
+import { assertRepositorySpyCalled } from '@test/helpers/spy-helpers';
 
 let inMemoryQuestionRepository: QuestionRepository;
 let sut: GetQuestionBySlugUseCase;

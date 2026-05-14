@@ -1,10 +1,10 @@
 import { Mock } from 'vitest';
-import { makeQuestion } from '../../../../test/factories/make-question';
+import { makeQuestion } from '@test/factories/make-question';
 import {
   assertRepositorySpyCalled,
   assertRepositorySpyNotCalled,
-} from '../../../../test/helpers/spy-helpers';
-import { InMemoryQuestionRepository } from '../../../../test/repositories/in-memory-question-repository';
+} from '@test/helpers/spy-helpers';
+import { InMemoryQuestionRepository } from '@test/repositories/in-memory-question-repository';
 import { QuestionRepository } from '../repositories/question-repository';
 import { UpdateQuestionUseCase } from './update-question';
 

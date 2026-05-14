@@ -1,10 +1,10 @@
 import { Mock } from 'vitest';
-import { makeQuestion } from '../../../../test/factories/make-question';
+import { makeQuestion } from '@test/factories/make-question';
 import {
   assertRepositorySpyCalled,
   assertRepositorySpyNotCalled,
-} from '../../../../test/helpers/spy-helpers';
-import { InMemoryQuestionRepository } from '../../../../test/repositories/in-memory-question-repository';
+} from '@test/helpers/spy-helpers';
+import { InMemoryQuestionRepository } from '@test/repositories/in-memory-question-repository';
 import { QuestionRepository } from '../repositories/question-repository';
 import { DeleteQuestionUseCase } from './delete-question';
 
@@ -35,7 +35,10 @@ describe('Delete Question', () => {
 
   it('should not be able to delete a non existing question', async () => {
     await expect(() =>
-      sut.execute({ questionId: 'non-existing-question-id' }),
+      sut.execute({
+        questionId: 'non-existing-question-id',
+        authorId: 'any-author-id',
+      }),
     ).rejects.toThrow('Question not found');
     assertRepositorySpyNotCalled(sutRepositorySpy);
   });

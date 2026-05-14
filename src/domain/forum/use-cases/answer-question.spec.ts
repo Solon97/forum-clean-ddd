@@ -1,6 +1,6 @@
 import { Mock } from 'vitest';
-import { assertRepositorySpyCalled } from '../../../../test/helpers/spy-helpers';
-import { InMemoryAnswerRepository } from '../../../../test/repositories/in-memory-answer-repository';
+import { assertRepositorySpyCalled } from '@test/helpers/spy-helpers';
+import { InMemoryAnswerRepository } from '@test/repositories/in-memory-answer-repository';
 import { UniqueEntityId } from '../entities/value-objects/unique-entity-id';
 import { AnswerQuestionUseCase } from './answer-question';
 import type { AnswerRepository } from '@/domain/forum/repositories/answer-repository';
