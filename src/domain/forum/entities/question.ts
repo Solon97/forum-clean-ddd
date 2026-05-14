@@ -43,14 +43,6 @@ export class Question extends BaseEntityWithTimestamps<QuestionProps> {
     return this.props.bestAnswerId;
   }
 
-  get createdAt() {
-    return this.props.createdAt;
-  }
-
-  get updatedAt() {
-    return this.props.updatedAt;
-  }
-
   get excerpt() {
     return this.content.substring(0, 120).trimEnd().concat('...');
   }
@@ -69,9 +61,5 @@ export class Question extends BaseEntityWithTimestamps<QuestionProps> {
   set bestAnswerId(bestAnswerId: UniqueEntityId | undefined) {
     this.props.bestAnswerId = bestAnswerId;
     this.touch();
-  }
-
-  private touch() {
-    this.props.updatedAt = new Date();
   }
 }

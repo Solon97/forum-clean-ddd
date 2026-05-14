@@ -35,4 +35,8 @@ export class BaseEntityWithTimestamps<TProps> extends BaseEntity<
   get updatedAt() {
     return this.props.updatedAt;
   }
+
+  protected touch() {
+    this.props.updatedAt = new Date();
+  }
 }
