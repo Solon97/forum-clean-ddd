@@ -1,54 +1,57 @@
 import { Mock } from 'vitest';
-import { makeQuestion } from '../../../../test/factories/make-question';
+import { makeAnswer } from '../../../../test/factories/make-answer';
 import {
   assertRepositorySpyCalled,
   assertRepositorySpyNotCalled,
 } from '../../../../test/helpers/spy-helpers';
-import { InMemoryQuestionRepository } from '../../../../test/repositories/in-memory-question-repository';
-import { QuestionRepository } from '../repositories/question-repository';
-import { DeleteQuestionUseCase } from './delete-question';
+import { InMemoryAnswerRepository } from '../../../../test/repositories/in-memory-answer-repository';
+import { AnswerRepository } from '../repositories/answer-repository';
+import { DeleteAnswerUseCase } from './delete-answer';
 
-let inMemoryQuestionRepository: QuestionRepository;
-let sut: DeleteQuestionUseCase;
-let sutRepositorySpy: Mock<typeof inMemoryQuestionRepository.delete>;
+let inMemoryAnswerRepository: AnswerRepository;
+let sut: DeleteAnswerUseCase;
+let sutRepositorySpy: Mock<typeof inMemoryAnswerRepository.delete>;
 
-describe('Delete Question', () => {
+describe('Delete Answer', () => {
   beforeEach(() => {
-    inMemoryQuestionRepository = new InMemoryQuestionRepository();
-    sut = new DeleteQuestionUseCase(inMemoryQuestionRepository);
-    sutRepositorySpy = vi.spyOn(inMemoryQuestionRepository, 'delete');
+    inMemoryAnswerRepository = new InMemoryAnswerRepository();
+    sut = new DeleteAnswerUseCase(inMemoryAnswerRepository);
+    sutRepositorySpy = vi.spyOn(inMemoryAnswerRepository, 'delete');
   });
 
-  it('should be able to delete a question', async () => {
-    const exampleQuestion = makeQuestion();
-    await inMemoryQuestionRepository.create(exampleQuestion);
+  it('should be able to delete a answer', async () => {
+    const exampleAnswer = makeAnswer();
+    await inMemoryAnswerRepository.create(exampleAnswer);
     await sut.execute({
-      questionId: exampleQuestion.id.toString(),
-      authorId: exampleQuestion.authorId.toString(),
+      answerId: exampleAnswer.id.toString(),
+      authorId: exampleAnswer.authorId.toString(),
     });
-    assertRepositorySpyCalled(sutRepositorySpy, exampleQuestion);
-    const deletedQuestion = await inMemoryQuestionRepository.findById(
-      exampleQuestion.id.toString(),
+    assertRepositorySpyCalled(sutRepositorySpy, exampleAnswer);
+    const deletedAnswer = await inMemoryAnswerRepository.findById(
+      exampleAnswer.id.toString(),
     );
-    expect(deletedQuestion).toBeNull();
+    expect(deletedAnswer).toBeNull();
   });
 
-  it('should not be able to delete a non existing question', async () => {
+  it('should not be able to delete a non existing answer', async () => {
     await expect(() =>
-      sut.execute({ questionId: 'non-existing-question-id' }),
-    ).rejects.toThrow('Question not found');
+      sut.execute({
+        answerId: 'non-existing-answer-id',
+        authorId: 'any-author-id',
+      }),
+    ).rejects.toThrow('Answer not found');
     assertRepositorySpyNotCalled(sutRepositorySpy);
   });
 
-  it('should not be able to delete a question from another author', async () => {
-    const exampleQuestion = makeQuestion();
-    await inMemoryQuestionRepository.create(exampleQuestion);
+  it('should not be able to delete a answer from another author', async () => {
+    const exampleAnswer = makeAnswer();
+    await inMemoryAnswerRepository.create(exampleAnswer);
     await expect(() =>
       sut.execute({
-        questionId: exampleQuestion.id.toString(),
+        answerId: exampleAnswer.id.toString(),
         authorId: 'other-author-id',
       }),
-    ).rejects.toThrow('Question not found');
+    ).rejects.toThrow('Answer not found');
     assertRepositorySpyNotCalled(sutRepositorySpy);
   });
 });
