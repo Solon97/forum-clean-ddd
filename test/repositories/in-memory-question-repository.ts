@@ -3,12 +3,13 @@ import { QuestionRepository } from '@/domain/forum/repositories/question-reposit
 
 export class InMemoryQuestionRepository implements QuestionRepository {
   private items: Question[] = [];
-  async create(question: Question): Promise<void> {
+
+  create(question: Question): Promise<void> {
     this.items.push(question);
     return Promise.resolve();
   }
 
-  async update(question: Question): Promise<void> {
+  update(question: Question): Promise<void> {
     const index = this.items.findIndex(
       (item) => item.id.value === question.id.value,
     );
@@ -18,7 +19,7 @@ export class InMemoryQuestionRepository implements QuestionRepository {
     return Promise.resolve();
   }
 
-  async findBySlug(slug: string): Promise<Question | null> {
+  findBySlug(slug: string): Promise<Question | null> {
     const question = this.items.find((item) => item.slug.value === slug);
     return Promise.resolve(question || null);
   }
@@ -26,6 +27,10 @@ export class InMemoryQuestionRepository implements QuestionRepository {
   findById(id: string): Promise<Question | null> {
     const question = this.items.find((item) => item.id.value === id);
     return Promise.resolve(question || null);
+  }
+
+  findManyRecent(): Promise<Question[]> {
+    return Promise.resolve(this.items);
   }
 
   delete(question: Question): Promise<void> {
