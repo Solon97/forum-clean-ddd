@@ -2,7 +2,11 @@ import { Mock } from 'vitest';
 import { assertRepositorySpyCalled } from '@test/helpers/spy-helpers';
 import { InMemoryAnswerRepository } from '@test/repositories/in-memory-answer-repository';
 import { UniqueEntityId } from '../entities/value-objects/unique-entity-id';
-import { AnswerQuestionUseCase } from './answer-question';
+import {
+  AnswerQuestionUseCase,
+  AnswerQuestionUseCaseInput,
+  AnswerQuestionUseCaseOutput,
+} from './answer-question';
 import type { AnswerRepository } from '@/domain/forum/repositories/answer-repository';
 
 let inMemoryAnswerRepository: AnswerRepository;
@@ -19,13 +23,14 @@ describe('Create Answer', () => {
   test('should be able to create an answer', async () => {
     const questionId = new UniqueEntityId().toString();
     const instructorId = new UniqueEntityId().toString();
-    const input = {
+    const input: AnswerQuestionUseCaseInput = {
       questionId,
       instructorId,
       content: 'This is an answer to the question.',
     };
 
-    const output = await answerQuestionUseCase.execute(input);
+    const output: AnswerQuestionUseCaseOutput =
+      await answerQuestionUseCase.execute(input);
 
     assertRepositorySpyCalled(sutRepositorySpy);
     expect(output).toBeTruthy();

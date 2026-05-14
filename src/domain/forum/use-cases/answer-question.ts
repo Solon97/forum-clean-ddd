@@ -2,13 +2,13 @@ import { Answer } from '../entities/answer.js';
 import { UniqueEntityId } from '../entities/value-objects/unique-entity-id/index.js';
 import type { AnswerRepository } from '../repositories/answer-repository.js';
 
-interface AnswerQuestionUseCaseInput {
+export interface AnswerQuestionUseCaseInput {
   questionId: string;
   instructorId: string;
   content: string;
 }
 
-interface AnswerQuestionUseCaseOutput {
+export interface AnswerQuestionUseCaseOutput {
   answer: Answer;
 }
 
