@@ -8,7 +8,7 @@ export default defineConfig({
     checker({
       typescript: true,
       eslint: {
-        lintCommand: 'eslint . --ext .ts,.tsx',
+        lintCommand: 'eslint src test --ext .ts',
       },
     }),
   ],
