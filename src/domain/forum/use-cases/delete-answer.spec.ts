@@ -1,12 +1,17 @@
-import { Mock } from 'vitest';
 import { makeAnswer } from '@test/factories/make-answer';
+import {
+  assertEitherIsLeft,
+  assertEitherIsRight,
+} from '@test/helpers/assert-either';
 import {
   assertRepositorySpyCalled,
   assertRepositorySpyNotCalled,
 } from '@test/helpers/spy-helpers';
 import { InMemoryAnswerRepository } from '@test/repositories/in-memory-answer-repository';
+import { Mock } from 'vitest';
 import { AnswerRepository } from '../repositories/answer-repository';
 import { DeleteAnswerUseCase } from './delete-answer';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 
 let inMemoryAnswerRepository: AnswerRepository;
 let sut: DeleteAnswerUseCase;
@@ -22,10 +27,11 @@ describe('Delete Answer', () => {
   it('should be able to delete a answer', async () => {
     const exampleAnswer = makeAnswer();
     await inMemoryAnswerRepository.create(exampleAnswer);
-    await sut.execute({
+    const result = await sut.execute({
       answerId: exampleAnswer.id.toString(),
       authorId: exampleAnswer.authorId.toString(),
     });
+    assertEitherIsRight(result);
     assertRepositorySpyCalled(sutRepositorySpy, exampleAnswer);
     const deletedAnswer = await inMemoryAnswerRepository.findById(
       exampleAnswer.id.toString(),
@@ -34,24 +40,24 @@ describe('Delete Answer', () => {
   });
 
   it('should not be able to delete a non existing answer', async () => {
-    await expect(() =>
-      sut.execute({
-        answerId: 'non-existing-answer-id',
-        authorId: 'any-author-id',
-      }),
-    ).rejects.toThrow('Answer not found');
+    const result = await sut.execute({
+      answerId: 'non-existing-answer-id',
+      authorId: 'any-author-id',
+    });
+    assertEitherIsLeft(result);
+    expect(result.left).toBeInstanceOf(ResourceNotFoundError);
     assertRepositorySpyNotCalled(sutRepositorySpy);
   });
 
   it('should not be able to delete a answer from another author', async () => {
     const exampleAnswer = makeAnswer();
     await inMemoryAnswerRepository.create(exampleAnswer);
-    await expect(() =>
-      sut.execute({
-        answerId: exampleAnswer.id.toString(),
-        authorId: 'other-author-id',
-      }),
-    ).rejects.toThrow('Answer not found');
+    const result = await sut.execute({
+      answerId: exampleAnswer.id.toString(),
+      authorId: 'other-author-id',
+    });
+    assertEitherIsLeft(result);
+    expect(result.left).toBeInstanceOf(ResourceNotFoundError);
     assertRepositorySpyNotCalled(sutRepositorySpy);
   });
 });

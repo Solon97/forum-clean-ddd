@@ -1,8 +1,14 @@
+import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
 import { makeAnswer } from '@test/factories/make-answer';
+import {
+  assertEitherIsLeft,
+  assertEitherIsRight,
+} from '@test/helpers/assert-either';
 import {
   assertRepositorySpyCalled,
   assertRepositorySpyNotCalled,
 } from '@test/helpers/spy-helpers';
+import { InMemoryAnswerCommentRepository } from '@test/repositories/in-memory-answer-comment-repository';
 import { InMemoryAnswerRepository } from '@test/repositories/in-memory-answer-repository';
 import { Mock } from 'vitest';
 import { AnswerCommentRepository } from '../repositories/answer-comment-repository';
@@ -11,8 +17,7 @@ import {
   CommentOnAnswerUseCase,
   CommentOnAnswerUseCaseInput,
 } from './comment-on-answer';
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
-import { InMemoryAnswerCommentRepository } from '@test/repositories/in-memory-answer-comment-repository';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 
 let inMemoryAnswerRepository: AnswerRepository;
 let inMemoryAnswerCommentRepository: AnswerCommentRepository;
@@ -41,23 +46,25 @@ describe('Comment On Answer', () => {
 
     const result = await sut.execute(input);
 
+    assertEitherIsRight(result);
     assertRepositorySpyCalled(sutRepositorySpy);
-    expect(result.comment.id).toBeTruthy();
-    expect(result.comment.content).toBe('This is a comment');
-    expect(result.comment.answerId.toString()).toBe(
+    expect(result.right.comment.id).toBeTruthy();
+    expect(result.right.comment.content).toBe('This is a comment');
+    expect(result.right.comment.answerId.toString()).toBe(
       exampleAnswer.id.toString(),
     );
-    expect(result.comment.authorId.toString()).toBe(input.authorId);
+    expect(result.right.comment.authorId.toString()).toBe(input.authorId);
   });
 
   it('should not be able to comment on a non existing answer', async () => {
-    await expect(() =>
-      sut.execute({
-        content: 'This is a comment',
-        answerId: 'non-existing-answer-id',
-        authorId: 'any-author-id',
-      }),
-    ).rejects.toThrow('Answer not found');
+    const result = await sut.execute({
+      content: 'This is a comment',
+      answerId: 'non-existing-answer-id',
+      authorId: 'any-author-id',
+    });
+
+    assertEitherIsLeft(result);
+    expect(result.left).toBeInstanceOf(ResourceNotFoundError);
     assertRepositorySpyNotCalled(sutRepositorySpy);
   });
 });

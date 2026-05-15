@@ -1,4 +1,6 @@
+import { Either, left, right } from 'fp-ts/lib/Either';
 import { QuestionRepository } from '../repositories/question-repository';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 
 interface UpdateQuestionUseCaseInput {
   authorId: string;
@@ -15,13 +17,16 @@ export class UpdateQuestionUseCase {
     authorId,
     title,
     content,
-  }: UpdateQuestionUseCaseInput): Promise<void> {
+  }: UpdateQuestionUseCaseInput): Promise<
+    Either<ResourceNotFoundError, undefined>
+  > {
     const question = await this.questionRepository.findById(questionId);
     if (!question || question.authorId.toString() !== authorId) {
-      throw new Error('Question not found');
+      return left(new ResourceNotFoundError());
     }
     question.title = title;
     question.content = content;
     await this.questionRepository.update(question);
+    return right(undefined);
   }
 }

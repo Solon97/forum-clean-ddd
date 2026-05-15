@@ -1,11 +1,16 @@
-import { Mock } from 'vitest';
 import { makeQuestion } from '@test/factories/make-question';
+import {
+  assertEitherIsLeft,
+  assertEitherIsRight,
+} from '@test/helpers/assert-either';
 import {
   assertRepositorySpyCalled,
   assertRepositorySpyNotCalled,
 } from '@test/helpers/spy-helpers';
 import { InMemoryQuestionRepository } from '@test/repositories/in-memory-question-repository';
+import { Mock } from 'vitest';
 import { QuestionRepository } from '../repositories/question-repository';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 import { UpdateQuestionUseCase } from './update-question';
 
 let inMemoryQuestionRepository: QuestionRepository;
@@ -28,12 +33,13 @@ describe('Update Question', () => {
     const originalCreatedAt = exampleQuestion.createdAt.getTime();
     const originalUpdatedAt = exampleQuestion.updatedAt?.getTime() ?? 0;
     vi.advanceTimersByTime(1000);
-    await sut.execute({
+    const result = await sut.execute({
       questionId: exampleQuestion.id.toString(),
       authorId: exampleQuestion.authorId.toString(),
       title: 'Updated Title',
       content: 'Updated Content',
     });
+    assertEitherIsRight(result);
     assertRepositorySpyCalled(sutRepositorySpy, exampleQuestion);
     const updatedQuestion = await inMemoryQuestionRepository.findById(
       exampleQuestion.id.toString(),
@@ -48,28 +54,28 @@ describe('Update Question', () => {
   });
 
   it('should not be able to update a non existing question', async () => {
-    await expect(() =>
-      sut.execute({
-        questionId: 'non-existing-question-id',
-        authorId: 'any-author-id',
-        title: 'Title',
-        content: 'Content',
-      }),
-    ).rejects.toThrow('Question not found');
+    const result = await sut.execute({
+      questionId: 'non-existing-question-id',
+      authorId: 'any-author-id',
+      title: 'Title',
+      content: 'Content',
+    });
+    assertEitherIsLeft(result);
+    expect(result.left).toBeInstanceOf(ResourceNotFoundError);
     assertRepositorySpyNotCalled(sutRepositorySpy);
   });
 
   it('should not be able to update a question from another author', async () => {
     const exampleQuestion = makeQuestion();
     await inMemoryQuestionRepository.create(exampleQuestion);
-    await expect(() =>
-      sut.execute({
-        questionId: exampleQuestion.id.toString(),
-        authorId: 'other-author-id',
-        title: 'Updated Title',
-        content: 'Updated Content',
-      }),
-    ).rejects.toThrow('Question not found');
+    const result = await sut.execute({
+      questionId: exampleQuestion.id.toString(),
+      authorId: 'other-author-id',
+      title: 'Updated Title',
+      content: 'Updated Content',
+    });
+    assertEitherIsLeft(result);
+    expect(result.left).toBeInstanceOf(ResourceNotFoundError);
     assertRepositorySpyNotCalled(sutRepositorySpy);
   });
 });

@@ -2,6 +2,8 @@ import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-en
 import { AnswerComment } from '../entities/comment';
 import { AnswerCommentRepository } from '../repositories/answer-comment-repository';
 import { AnswerRepository } from '../repositories/answer-repository';
+import { ResourceNotFoundError } from './errors/resource-not-found';
+import { Either, left, right } from 'fp-ts/lib/Either';
 
 export interface CommentOnAnswerUseCaseInput {
   authorId: string;
@@ -23,10 +25,12 @@ export class CommentOnAnswerUseCase {
     authorId,
     answerId,
     content,
-  }: CommentOnAnswerUseCaseInput): Promise<CommentOnAnswerUseCaseOutput> {
+  }: CommentOnAnswerUseCaseInput): Promise<
+    Either<ResourceNotFoundError, CommentOnAnswerUseCaseOutput>
+  > {
     const answer = await this.answerRepository.findById(answerId);
     if (!answer) {
-      throw new Error('Answer not found');
+      return left(new ResourceNotFoundError());
     }
     const comment = new AnswerComment({
       authorId: new UniqueEntityId(authorId),
@@ -36,8 +40,8 @@ export class CommentOnAnswerUseCase {
 
     await this.answerCommentRepository.create(comment);
 
-    return {
+    return right({
       comment,
-    };
+    });
   }
 }

@@ -3,6 +3,10 @@ import {
   assertRepositorySpyCalled,
   assertRepositorySpyNotCalled,
 } from '@test/helpers/spy-helpers';
+import {
+  assertEitherIsLeft,
+  assertEitherIsRight,
+} from '@test/helpers/assert-either';
 import { InMemoryQuestionCommentRepository } from '@test/repositories/in-memory-question-comment-repository';
 import { InMemoryQuestionRepository } from '@test/repositories/in-memory-question-repository';
 import { Mock } from 'vitest';
@@ -13,6 +17,7 @@ import {
   CommentOnQuestionUseCaseInput,
 } from './comment-on-question';
 import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 
 let inMemoryQuestionRepository: QuestionRepository;
 let inMemoryQuestionCommentRepository: QuestionCommentRepository;
@@ -42,22 +47,23 @@ describe('Comment On Question', () => {
     const result = await sut.execute(input);
 
     assertRepositorySpyCalled(sutRepositorySpy);
-    expect(result.comment.id).toBeTruthy();
-    expect(result.comment.content).toBe('This is a comment');
-    expect(result.comment.questionId.toString()).toBe(
+    assertEitherIsRight(result);
+    expect(result.right.comment.id).toBeTruthy();
+    expect(result.right.comment.content).toBe('This is a comment');
+    expect(result.right.comment.questionId.toString()).toBe(
       exampleQuestion.id.toString(),
     );
-    expect(result.comment.authorId.toString()).toBe(input.authorId);
+    expect(result.right.comment.authorId.toString()).toBe(input.authorId);
   });
 
   it('should not be able to comment on a non existing question', async () => {
-    await expect(() =>
-      sut.execute({
-        content: 'This is a comment',
-        questionId: 'non-existing-question-id',
-        authorId: 'any-author-id',
-      }),
-    ).rejects.toThrow('Question not found');
+    const result = await sut.execute({
+      content: 'This is a comment',
+      questionId: 'non-existing-question-id',
+      authorId: 'any-author-id',
+    });
+    assertEitherIsLeft(result);
+    expect(result.left).toBeInstanceOf(ResourceNotFoundError);
     assertRepositorySpyNotCalled(sutRepositorySpy);
   });
 });

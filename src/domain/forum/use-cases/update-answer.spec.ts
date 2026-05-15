@@ -1,11 +1,16 @@
-import { Mock } from 'vitest';
 import { makeAnswer } from '@test/factories/make-answer';
+import {
+  assertEitherIsLeft,
+  assertEitherIsRight,
+} from '@test/helpers/assert-either';
 import {
   assertRepositorySpyCalled,
   assertRepositorySpyNotCalled,
 } from '@test/helpers/spy-helpers';
 import { InMemoryAnswerRepository } from '@test/repositories/in-memory-answer-repository';
+import { Mock } from 'vitest';
 import { AnswerRepository } from '../repositories/answer-repository';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 import { UpdateAnswerUseCase } from './update-answer';
 
 let inMemoryAnswerRepository: AnswerRepository;
@@ -28,11 +33,12 @@ describe('Update Answer', () => {
     const originalCreatedAt = exampleAnswer.createdAt.getTime();
     const originalUpdatedAt = exampleAnswer.updatedAt?.getTime() ?? 0;
     vi.advanceTimersByTime(1000);
-    await sut.execute({
+    const result = await sut.execute({
       answerId: exampleAnswer.id.toString(),
       authorId: exampleAnswer.authorId.toString(),
       content: 'Updated Content',
     });
+    assertEitherIsRight(result);
     assertRepositorySpyCalled(sutRepositorySpy, exampleAnswer);
     const updatedAnswer = await inMemoryAnswerRepository.findById(
       exampleAnswer.id.toString(),
@@ -46,26 +52,26 @@ describe('Update Answer', () => {
   });
 
   it('should not be able to update a non existing answer', async () => {
-    await expect(() =>
-      sut.execute({
-        answerId: 'non-existing-answer-id',
-        authorId: 'any-author-id',
-        content: 'Content',
-      }),
-    ).rejects.toThrow('Answer not found');
+    const result = await sut.execute({
+      answerId: 'non-existing-answer-id',
+      authorId: 'any-author-id',
+      content: 'Content',
+    });
+    assertEitherIsLeft(result);
+    expect(result.left).toBeInstanceOf(ResourceNotFoundError);
     assertRepositorySpyNotCalled(sutRepositorySpy);
   });
 
   it('should not be able to update a answer from another author', async () => {
     const exampleAnswer = makeAnswer();
     await inMemoryAnswerRepository.create(exampleAnswer);
-    await expect(() =>
-      sut.execute({
-        answerId: exampleAnswer.id.toString(),
-        authorId: 'other-author-id',
-        content: 'Updated Content',
-      }),
-    ).rejects.toThrow('Answer not found');
+    const result = await sut.execute({
+      answerId: exampleAnswer.id.toString(),
+      authorId: 'other-author-id',
+      content: 'Updated Content',
+    });
+    assertEitherIsLeft(result);
+    expect(result.left).toBeInstanceOf(ResourceNotFoundError);
     assertRepositorySpyNotCalled(sutRepositorySpy);
   });
 });

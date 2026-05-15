@@ -4,6 +4,11 @@ import { InMemoryQuestionRepository } from '@test/repositories/in-memory-questio
 import { QuestionRepository } from '../repositories/question-repository';
 import { GetQuestionBySlugUseCase } from './get-question-by-slug';
 import { assertRepositorySpyCalled } from '@test/helpers/spy-helpers';
+import {
+  assertEitherIsLeft,
+  assertEitherIsRight,
+} from '@test/helpers/assert-either';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 
 let inMemoryQuestionRepository: QuestionRepository;
 let sut: GetQuestionBySlugUseCase;
@@ -20,20 +25,22 @@ describe('Get Question by Slug', () => {
     const exampleQuestion = makeQuestion();
     await inMemoryQuestionRepository.create(exampleQuestion);
 
-    const { question } = await sut.execute({
+    const result = await sut.execute({
       slug: exampleQuestion.slug.value,
     });
 
+    assertEitherIsRight(result);
     assertRepositorySpyCalled(sutRepositorySpy, exampleQuestion.slug.value);
-    expect(question).toEqual(exampleQuestion);
+    expect(result.right.question).toEqual(exampleQuestion);
   });
 
   it('should not be able to get a question with an invalid slug', async () => {
-    await expect(() =>
-      sut.execute({
-        slug: 'invalid-slug',
-      }),
-    ).rejects.toThrow('Question not found');
+    const result = await sut.execute({
+      slug: 'invalid-slug',
+    });
+
+    assertEitherIsLeft(result);
+    expect(result.left).toBeInstanceOf(ResourceNotFoundError);
     assertRepositorySpyCalled(sutRepositorySpy, 'invalid-slug');
   });
 });

@@ -1,5 +1,7 @@
+import { Either, left, right } from 'fp-ts/lib/Either';
 import { Question } from '../entities/question';
 import { QuestionRepository } from '../repositories/question-repository';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 
 interface GetQuestionBySlugUseCaseInput {
   slug: string;
@@ -14,13 +16,13 @@ export class GetQuestionBySlugUseCase {
 
   async execute({
     slug,
-  }: GetQuestionBySlugUseCaseInput): Promise<GetQuestionBySlugUseCaseOutput> {
+  }: GetQuestionBySlugUseCaseInput): Promise<
+    Either<ResourceNotFoundError, GetQuestionBySlugUseCaseOutput>
+  > {
     const question = await this.questionRepository.findBySlug(slug);
     if (!question) {
-      throw new Error('Question not found');
+      return left(new ResourceNotFoundError());
     }
-    return {
-      question,
-    };
+    return right({ question });
   }
 }

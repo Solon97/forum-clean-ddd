@@ -3,6 +3,10 @@ import {
   assertRepositorySpyCalled,
   assertRepositorySpyNotCalled,
 } from '@test/helpers/spy-helpers';
+import {
+  assertEitherIsLeft,
+  assertEitherIsRight,
+} from '@test/helpers/assert-either';
 import { InMemoryAnswerRepository } from '@test/repositories/in-memory-answer-repository';
 import { InMemoryQuestionRepository } from '@test/repositories/in-memory-question-repository';
 import { Mock } from 'vitest';
@@ -10,6 +14,8 @@ import { AnswerRepository } from '../repositories/answer-repository';
 import { QuestionRepository } from '../repositories/question-repository';
 import { SetBestAnswerUseCase } from './set-best-answer';
 import { makeQuestion } from '@test/factories/make-question';
+import { NotAllowedError } from './errors/not-allowed';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 
 let inMemoryQuestionRepository: QuestionRepository;
 let inMemoryAnswerRepository: AnswerRepository;
@@ -40,11 +46,12 @@ describe('Set Best Answer', () => {
     const originalUpdatedAt = exampleQuestion.updatedAt?.getTime() ?? 0;
 
     vi.advanceTimersByTime(1000);
-    await sut.execute({
+    const result = await sut.execute({
       answerId: exampleAnswer.id.toString(),
       authorId: exampleQuestion.authorId.toString(),
     });
 
+    assertEitherIsRight(result);
     assertRepositorySpyCalled(sutRepositorySpy, exampleQuestion);
     const updatedQuestion = await inMemoryQuestionRepository.findById(
       exampleQuestion.id.toString(),
@@ -60,24 +67,24 @@ describe('Set Best Answer', () => {
   });
 
   it('should not be able to set the best answer for a non existing answer', async () => {
-    await expect(() =>
-      sut.execute({
-        answerId: 'non-existing-answer-id',
-        authorId: 'any-author-id',
-      }),
-    ).rejects.toThrow('Answer not found');
+    const result = await sut.execute({
+      answerId: 'non-existing-answer-id',
+      authorId: 'any-author-id',
+    });
+    assertEitherIsLeft(result);
+    expect(result.left).toBeInstanceOf(ResourceNotFoundError);
     assertRepositorySpyNotCalled(sutRepositorySpy);
   });
 
   it('should not be able to set the best answer for a non existing question', async () => {
     const exampleAnswer = makeAnswer();
     await inMemoryAnswerRepository.create(exampleAnswer);
-    await expect(() =>
-      sut.execute({
-        answerId: exampleAnswer.id.toString(),
-        authorId: 'any-author-id',
-      }),
-    ).rejects.toThrow('Question not found');
+    const result = await sut.execute({
+      answerId: exampleAnswer.id.toString(),
+      authorId: 'any-author-id',
+    });
+    assertEitherIsLeft(result);
+    expect(result.left).toBeInstanceOf(ResourceNotFoundError);
     assertRepositorySpyNotCalled(sutRepositorySpy);
   });
 
@@ -86,12 +93,12 @@ describe('Set Best Answer', () => {
     const exampleAnswer = makeAnswer({ questionId: exampleQuestion.id });
     await inMemoryQuestionRepository.create(exampleQuestion);
     await inMemoryAnswerRepository.create(exampleAnswer);
-    await expect(() =>
-      sut.execute({
-        answerId: exampleAnswer.id.toString(),
-        authorId: 'other-author-id',
-      }),
-    ).rejects.toThrow('Not allowed');
+    const result = await sut.execute({
+      answerId: exampleAnswer.id.toString(),
+      authorId: 'other-author-id',
+    });
+    assertEitherIsLeft(result);
+    expect(result.left).toBeInstanceOf(NotAllowedError);
     assertRepositorySpyNotCalled(sutRepositorySpy);
   });
 });

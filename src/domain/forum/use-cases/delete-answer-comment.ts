@@ -1,4 +1,6 @@
+import { Either, left, right } from 'fp-ts/lib/Either';
 import { AnswerCommentRepository } from '../repositories/answer-comment-repository';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 
 interface DeleteAnswerCommentUseCaseInput {
   commentId: string;
@@ -11,12 +13,15 @@ export class DeleteAnswerCommentUseCase {
   async execute({
     commentId,
     authorId,
-  }: DeleteAnswerCommentUseCaseInput): Promise<void> {
+  }: DeleteAnswerCommentUseCaseInput): Promise<
+    Either<ResourceNotFoundError, undefined>
+  > {
     const comment = await this.answerCommentRepository.findById(commentId);
     if (!comment || comment.authorId.toString() !== authorId) {
-      throw new Error('Comment not found');
+      return left(new ResourceNotFoundError());
     }
 
     await this.answerCommentRepository.delete(comment);
+    return right(undefined);
   }
 }

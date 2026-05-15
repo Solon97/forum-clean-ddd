@@ -1,13 +1,18 @@
-import { Mock } from 'vitest';
+import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
 import {
   assertRepositorySpyCalled,
   assertRepositorySpyNotCalled,
 } from '@test/helpers/spy-helpers';
+import {
+  assertEitherIsLeft,
+  assertEitherIsRight,
+} from '@test/helpers/assert-either';
 import { InMemoryAnswerCommentRepository } from '@test/repositories/in-memory-answer-comment-repository';
+import { Mock } from 'vitest';
 import { AnswerComment } from '../entities/comment';
 import { AnswerCommentRepository } from '../repositories/answer-comment-repository';
 import { DeleteAnswerCommentUseCase } from './delete-answer-comment';
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 
 let inMemoryAnswerCommentRepository: AnswerCommentRepository;
 let sut: DeleteAnswerCommentUseCase;
@@ -29,11 +34,12 @@ describe('Delete Answer Comment', () => {
 
     await inMemoryAnswerCommentRepository.create(exampleComment);
 
-    await sut.execute({
+    const result = await sut.execute({
       commentId: exampleComment.id.toString(),
       authorId: exampleComment.authorId.toString(),
     });
 
+    assertEitherIsRight(result);
     assertRepositorySpyCalled(sutRepositorySpy, exampleComment);
 
     const deletedComment = await inMemoryAnswerCommentRepository.findById(
@@ -44,13 +50,13 @@ describe('Delete Answer Comment', () => {
   });
 
   it('should not be able to delete a non existing answer comment', async () => {
-    await expect(() =>
-      sut.execute({
-        commentId: 'non-existing-comment-id',
-        authorId: 'any-author-id',
-      }),
-    ).rejects.toThrow('Comment not found');
+    const result = await sut.execute({
+      commentId: 'non-existing-comment-id',
+      authorId: 'any-author-id',
+    });
 
+    assertEitherIsLeft(result);
+    expect(result.left).toBeInstanceOf(ResourceNotFoundError);
     assertRepositorySpyNotCalled(sutRepositorySpy);
   });
 
@@ -63,13 +69,13 @@ describe('Delete Answer Comment', () => {
 
     await inMemoryAnswerCommentRepository.create(exampleComment);
 
-    await expect(() =>
-      sut.execute({
-        commentId: exampleComment.id.toString(),
-        authorId: 'other-author-id',
-      }),
-    ).rejects.toThrow('Comment not found');
+    const result = await sut.execute({
+      commentId: exampleComment.id.toString(),
+      authorId: 'other-author-id',
+    });
 
+    assertEitherIsLeft(result);
+    expect(result.left).toBeInstanceOf(ResourceNotFoundError);
     assertRepositorySpyNotCalled(sutRepositorySpy);
   });
 });

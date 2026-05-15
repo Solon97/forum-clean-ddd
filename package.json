@@ -28,5 +28,8 @@
     "vite-plugin-checker": "^0.13.0",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.6"
+  },
+  "dependencies": {
+    "fp-ts": "^2.16.11"
   }
 }

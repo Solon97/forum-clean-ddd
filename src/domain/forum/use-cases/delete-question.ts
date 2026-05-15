@@ -1,4 +1,6 @@
+import { Either, left, right } from 'fp-ts/lib/Either';
 import { QuestionRepository } from '../repositories/question-repository';
+import { ResourceNotFoundError } from './errors/resource-not-found';
 
 interface DeleteQuestionUseCaseInput {
   questionId: string;
@@ -11,11 +13,14 @@ export class DeleteQuestionUseCase {
   async execute({
     questionId,
     authorId,
-  }: DeleteQuestionUseCaseInput): Promise<void> {
+  }: DeleteQuestionUseCaseInput): Promise<
+    Either<ResourceNotFoundError, undefined>
+  > {
     const question = await this.questionRepository.findById(questionId);
     if (!question || question.authorId.toString() !== authorId) {
-      throw new Error('Question not found');
+      return left(new ResourceNotFoundError());
     }
     await this.questionRepository.delete(question);
+    return right(undefined);
   }
 }
