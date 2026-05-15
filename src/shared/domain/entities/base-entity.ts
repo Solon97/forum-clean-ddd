@@ -13,30 +13,22 @@ export class BaseEntity<TProps extends object> {
     this.id = id ?? new UniqueEntityId();
     this.props = props;
   }
-}
 
-export class BaseEntityWithTimestamps<TProps> extends BaseEntity<
-  TProps & Timestamps
-> {
-  constructor(props: TProps & Partial<Timestamps>, id?: UniqueEntityId) {
+  protected static setPropsTimestamps<TProps extends object>(
+    props: TProps & Partial<Timestamps>,
+  ): TProps & Timestamps {
     const now = new Date();
-    const propsWithTimestamps: TProps & Timestamps = {
+    return {
       ...props,
       createdAt: props.createdAt ?? now,
       updatedAt: props.updatedAt ?? now,
     };
-    super(propsWithTimestamps, id);
-  }
-
-  get createdAt() {
-    return this.props.createdAt;
-  }
-
-  get updatedAt() {
-    return this.props.updatedAt;
   }
 
   protected touch() {
+    if (!('updatedAt' in this.props)) {
+      throw new Error('Props does not have updatedAt property');
+    }
     this.props.updatedAt = new Date();
   }
 }

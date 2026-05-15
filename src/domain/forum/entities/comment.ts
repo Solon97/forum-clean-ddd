@@ -1,4 +1,4 @@
-import { BaseEntityWithTimestamps } from '@/shared/domain/entities/base-entity';
+import { BaseEntity, Timestamps } from '@/shared/domain/entities/base-entity';
 import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
 
 export interface CommentProps {
@@ -6,15 +6,28 @@ export interface CommentProps {
   authorId: UniqueEntityId;
 }
 
-abstract class Comment<
-  T extends CommentProps,
-> extends BaseEntityWithTimestamps<T> {
+abstract class Comment<T extends CommentProps> extends BaseEntity<
+  T & Timestamps
+> {
+  constructor(props: T & Partial<Timestamps>, id?: UniqueEntityId) {
+    const propsWithTimestamps = BaseEntity.setPropsTimestamps(props);
+    super(propsWithTimestamps, id);
+  }
+
   get authorId() {
     return this.props.authorId;
   }
 
   get content() {
     return this.props.content;
+  }
+
+  get createdAt() {
+    return this.props.createdAt;
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt;
   }
 
   set content(content: string) {
