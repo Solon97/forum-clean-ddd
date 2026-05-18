@@ -38,7 +38,7 @@ describe('Create Question', () => {
     expect(output.question.content).toBe(input.content);
     expect(output.question.createdAt).toBeTruthy();
     expect(output.question.updatedAt).toBeTruthy();
-    expect(output.question.attachments).toEqual([]);
+    expect(output.question.attachments.currentItems).toEqual([]);
   });
 
   it('should create a question with attachments', async () => {
@@ -54,9 +54,9 @@ describe('Create Question', () => {
 
     assertRepositorySpyCalled(sutRepositorySpy);
     expect(output.question).toBeTruthy();
-    expect(output.question.attachments).toHaveLength(1);
-    expect(output.question.attachments[0]?.attachmentId.toString()).toBe(
-      input.attachmentIds[0],
-    );
+    expect(output.question.attachments.currentItems).toHaveLength(1);
+    expect(
+      output.question.attachments.currentItems[0]?.attachmentId.toString(),
+    ).toBe(input.attachmentIds[0]);
   });
 });

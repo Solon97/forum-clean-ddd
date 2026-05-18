@@ -2,13 +2,13 @@ import { AggregateRoot } from '@/shared/domain/entities/aggregate-root';
 import { BaseEntity, Timestamps } from '@/shared/domain/entities/base-entity';
 import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id/index';
 import { Optional } from '@/types/optional';
-import { QuestionAttachment } from './question-attachment';
+import { QuestionAttachmentList } from './question-attachment-list';
 import { Slug } from './value-objects/slug/index';
 
 export interface QuestionProps {
   authorId: UniqueEntityId;
   bestAnswerId?: UniqueEntityId | undefined;
-  attachments: QuestionAttachment[];
+  attachments: QuestionAttachmentList;
   title: string;
   content: string;
   slug: Slug;
@@ -24,7 +24,7 @@ export class Question extends AggregateRoot<QuestionProps & Timestamps> {
     const propsWithTimestamps = BaseEntity.setPropsTimestamps({
       ...props,
       slug,
-      attachments: props.attachments || [],
+      attachments: props.attachments || new QuestionAttachmentList(),
     });
     super(propsWithTimestamps, id);
   }
@@ -81,7 +81,7 @@ export class Question extends AggregateRoot<QuestionProps & Timestamps> {
     this.touch();
   }
 
-  set attachments(attachments: QuestionAttachment[]) {
+  set attachments(attachments: QuestionAttachmentList) {
     this.props.attachments = attachments;
     this.touch();
   }

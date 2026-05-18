@@ -1,3 +1,4 @@
+import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
 import { makeQuestion } from '@test/factories/make-question';
 import {
   assertEitherIsLeft,
@@ -7,20 +8,29 @@ import {
   assertRepositorySpyCalled,
   assertRepositorySpyNotCalled,
 } from '@test/helpers/spy-helpers';
+import { InMemoryQuestionAttachmentsRepository } from '@test/repositories/in-memory-question-attachment-repository';
 import { InMemoryQuestionRepository } from '@test/repositories/in-memory-question-repository';
 import { Mock } from 'vitest';
+import { QuestionAttachment } from '../entities/question-attachment';
+import { QuestionAttachmentsRepository } from '../repositories/question-attachments-repository';
 import { QuestionRepository } from '../repositories/question-repository';
 import { ResourceNotFoundError } from './errors/resource-not-found';
 import { UpdateQuestionUseCase } from './update-question';
 
 let inMemoryQuestionRepository: QuestionRepository;
+let inMemoryQuestionAttachmentsRepository: QuestionAttachmentsRepository;
 let sut: UpdateQuestionUseCase;
 let sutRepositorySpy: Mock<typeof inMemoryQuestionRepository.update>;
 
 describe('Update Question', () => {
   beforeEach(() => {
     inMemoryQuestionRepository = new InMemoryQuestionRepository();
-    sut = new UpdateQuestionUseCase(inMemoryQuestionRepository);
+    inMemoryQuestionAttachmentsRepository =
+      new InMemoryQuestionAttachmentsRepository();
+    sut = new UpdateQuestionUseCase(
+      inMemoryQuestionRepository,
+      inMemoryQuestionAttachmentsRepository,
+    );
     sutRepositorySpy = vi.spyOn(inMemoryQuestionRepository, 'update');
   });
 
@@ -38,6 +48,7 @@ describe('Update Question', () => {
       authorId: exampleQuestion.authorId.toString(),
       title: 'Updated Title',
       content: 'Updated Content',
+      attachmentIds: [],
     });
     assertEitherIsRight(result);
     assertRepositorySpyCalled(sutRepositorySpy, exampleQuestion);
@@ -53,12 +64,62 @@ describe('Update Question', () => {
     );
   });
 
+  it('should be able to update a question with attachments', async () => {
+    const exampleQuestion = makeQuestion();
+    await inMemoryQuestionRepository.create(exampleQuestion);
+    const existingAttachments = [
+      new QuestionAttachment({
+        questionId: exampleQuestion.id,
+        attachmentId: new UniqueEntityId(),
+      }),
+      new QuestionAttachment({
+        questionId: exampleQuestion.id,
+        attachmentId: new UniqueEntityId(),
+      }),
+    ];
+    inMemoryQuestionAttachmentsRepository.items.push(...existingAttachments);
+    const newAttachmentIds = [
+      new UniqueEntityId().toString(),
+      existingAttachments[0]?.attachmentId.toString() ?? '',
+    ];
+
+    const result = await sut.execute({
+      questionId: exampleQuestion.id.toString(),
+      authorId: exampleQuestion.authorId.toString(),
+      title: 'Updated Title',
+      content: 'Updated Content',
+      attachmentIds: newAttachmentIds,
+    });
+
+    assertEitherIsRight(result);
+    assertRepositorySpyCalled(sutRepositorySpy, exampleQuestion);
+
+    const updatedQuestion = result.right.question;
+    //? validate current attachments
+    expect(updatedQuestion.attachments.getItems()).toHaveLength(2);
+    const attachmentIds = updatedQuestion.attachments
+      .getItems()
+      .map((a) => a.attachmentId.toString());
+    expect(attachmentIds).toEqual(expect.arrayContaining(newAttachmentIds));
+    //? validate removed attachments
+    expect(updatedQuestion.attachments.getRemovedItems()).toHaveLength(1);
+    expect(
+      updatedQuestion.attachments.getRemovedItems()[0]?.attachmentId.toString(),
+    ).toBe(existingAttachments[1]?.attachmentId.toString());
+    //? validate new attachments
+    expect(updatedQuestion.attachments.getNewItems()).toHaveLength(1);
+    expect(
+      updatedQuestion.attachments.getNewItems()[0]?.attachmentId.toString(),
+    ).toBe(newAttachmentIds[0]);
+  });
+
   it('should not be able to update a non existing question', async () => {
     const result = await sut.execute({
       questionId: 'non-existing-question-id',
       authorId: 'any-author-id',
       title: 'Title',
       content: 'Content',
+      attachmentIds: [],
     });
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
@@ -73,6 +134,7 @@ describe('Update Question', () => {
       authorId: 'other-author-id',
       title: 'Updated Title',
       content: 'Updated Content',
+      attachmentIds: [],
     });
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);

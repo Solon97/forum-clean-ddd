@@ -2,6 +2,7 @@ import { Question } from '../entities/question';
 import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
 import { QuestionRepository } from '../repositories/question-repository';
 import { QuestionAttachment } from '../entities/question-attachment';
+import { QuestionAttachmentList } from '../entities/question-attachment-list';
 
 export interface CreateQuestionUseCaseInput {
   authorId: string;
@@ -36,7 +37,7 @@ export class CreateQuestionUseCase {
       });
     });
 
-    question.attachments = questionAttachments;
+    question.attachments = new QuestionAttachmentList(questionAttachments);
 
     await this.questionRepository.create(question);
 
