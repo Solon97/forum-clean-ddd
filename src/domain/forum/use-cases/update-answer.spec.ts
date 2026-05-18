@@ -1,3 +1,4 @@
+import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
 import { makeAnswer } from '@test/factories/make-answer';
 import {
   assertEitherIsLeft,
@@ -7,20 +8,29 @@ import {
   assertRepositorySpyCalled,
   assertRepositorySpyNotCalled,
 } from '@test/helpers/spy-helpers';
+import { InMemoryAnswerAttachmentsRepository } from '@test/repositories/in-memory-answer-attachment-repository';
 import { InMemoryAnswerRepository } from '@test/repositories/in-memory-answer-repository';
 import { Mock } from 'vitest';
+import { AnswerAttachment } from '../entities/answer-attachment';
+import { AnswerAttachmentsRepository } from '../repositories/answer-attachments-repository';
 import { AnswerRepository } from '../repositories/answer-repository';
 import { ResourceNotFoundError } from './errors/resource-not-found';
 import { UpdateAnswerUseCase } from './update-answer';
 
 let inMemoryAnswerRepository: AnswerRepository;
+let inMemoryAnswerAttachmentsRepository: AnswerAttachmentsRepository;
 let sut: UpdateAnswerUseCase;
 let sutRepositorySpy: Mock<typeof inMemoryAnswerRepository.update>;
 
 describe('Update Answer', () => {
   beforeEach(() => {
     inMemoryAnswerRepository = new InMemoryAnswerRepository();
-    sut = new UpdateAnswerUseCase(inMemoryAnswerRepository);
+    inMemoryAnswerAttachmentsRepository =
+      new InMemoryAnswerAttachmentsRepository();
+    sut = new UpdateAnswerUseCase(
+      inMemoryAnswerRepository,
+      inMemoryAnswerAttachmentsRepository,
+    );
     sutRepositorySpy = vi.spyOn(inMemoryAnswerRepository, 'update');
   });
 
@@ -37,6 +47,7 @@ describe('Update Answer', () => {
       answerId: exampleAnswer.id.toString(),
       authorId: exampleAnswer.authorId.toString(),
       content: 'Updated Content',
+      attachmentIds: [],
     });
     assertEitherIsRight(result);
     assertRepositorySpyCalled(sutRepositorySpy, exampleAnswer);
@@ -51,11 +62,64 @@ describe('Update Answer', () => {
     );
   });
 
+  it('should be able to update a answer with attachments', async () => {
+    const exampleAnswer = makeAnswer();
+    await inMemoryAnswerRepository.create(exampleAnswer);
+    const existingAttachment = new AnswerAttachment({
+      answerId: exampleAnswer.id,
+      attachmentId: new UniqueEntityId(),
+    });
+    const removedAttachment = new AnswerAttachment({
+      answerId: exampleAnswer.id,
+      attachmentId: new UniqueEntityId(),
+    });
+    const newAttachment = new AnswerAttachment({
+      answerId: exampleAnswer.id,
+      attachmentId: new UniqueEntityId(),
+    });
+
+    inMemoryAnswerAttachmentsRepository.items.push(
+      ...[existingAttachment, removedAttachment],
+    );
+
+    const updatedAttachmentIds = [
+      existingAttachment.attachmentId.toString(),
+      newAttachment.attachmentId.toString(),
+    ];
+
+    const result = await sut.execute({
+      answerId: exampleAnswer.id.toString(),
+      authorId: exampleAnswer.authorId.toString(),
+      content: 'Updated Content',
+      attachmentIds: updatedAttachmentIds,
+    });
+    assertEitherIsRight(result);
+    assertRepositorySpyCalled(sutRepositorySpy, exampleAnswer);
+    const updatedQuestion = result.right.answer;
+    //? validate current attachments
+    expect(updatedQuestion.attachments.getItems()).toHaveLength(2);
+    const attachmentIds = updatedQuestion.attachments
+      .getItems()
+      .map((a) => a.attachmentId.toString());
+    expect(attachmentIds).toEqual(expect.arrayContaining(updatedAttachmentIds));
+    //? validate removed attachments
+    expect(updatedQuestion.attachments.getRemovedItems()).toHaveLength(1);
+    expect(
+      updatedQuestion.attachments.getRemovedItems()[0]?.attachmentId.toString(),
+    ).toBe(removedAttachment.attachmentId.toString());
+    //? validate new attachments
+    expect(updatedQuestion.attachments.getNewItems()).toHaveLength(1);
+    expect(
+      updatedQuestion.attachments.getNewItems()[0]?.attachmentId.toString(),
+    ).toBe(newAttachment.attachmentId.toString());
+  });
+
   it('should not be able to update a non existing answer', async () => {
     const result = await sut.execute({
       answerId: 'non-existing-answer-id',
       authorId: 'any-author-id',
       content: 'Content',
+      attachmentIds: [],
     });
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
@@ -69,6 +133,7 @@ describe('Update Answer', () => {
       answerId: exampleAnswer.id.toString(),
       authorId: 'other-author-id',
       content: 'Updated Content',
+      attachmentIds: [],
     });
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);

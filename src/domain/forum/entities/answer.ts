@@ -1,13 +1,13 @@
 import { BaseEntity, Timestamps } from '@/shared/domain/entities/base-entity';
 import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id/index';
-import { AnswerAttachment } from './answer-attachment';
 import { Optional } from '@/types/optional';
+import { AnswerAttachmentList } from './answer-attachment-list';
 
 export interface AnswerProps {
   questionId: UniqueEntityId;
   authorId: UniqueEntityId;
   content: string;
-  attachments: AnswerAttachment[];
+  attachments: AnswerAttachmentList;
 }
 
 export class Answer extends BaseEntity<AnswerProps & Timestamps> {
@@ -17,7 +17,13 @@ export class Answer extends BaseEntity<AnswerProps & Timestamps> {
   ) {
     const propsWithTimestamps = BaseEntity.setPropsTimestamps(props);
 
-    super({ ...propsWithTimestamps, attachments: props.attachments || [] }, id);
+    super(
+      {
+        ...propsWithTimestamps,
+        attachments: props.attachments || new AnswerAttachmentList(),
+      },
+      id,
+    );
   }
 
   get content() {
@@ -53,7 +59,7 @@ export class Answer extends BaseEntity<AnswerProps & Timestamps> {
     this.touch();
   }
 
-  set attachments(attachments: AnswerAttachment[]) {
+  set attachments(attachments: AnswerAttachmentList) {
     this.props.attachments = attachments;
     this.touch();
   }

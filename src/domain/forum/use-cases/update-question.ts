@@ -56,7 +56,7 @@ export class UpdateQuestionUseCase {
     question.attachments = questionAttachmentList;
     question.title = title;
     question.content = content;
-    console.log('Updated Question:', question);
+
     await this.questionRepository.update(question);
     return right({ question });
   }

@@ -67,20 +67,24 @@ describe('Update Question', () => {
   it('should be able to update a question with attachments', async () => {
     const exampleQuestion = makeQuestion();
     await inMemoryQuestionRepository.create(exampleQuestion);
-    const existingAttachments = [
-      new QuestionAttachment({
-        questionId: exampleQuestion.id,
-        attachmentId: new UniqueEntityId(),
-      }),
-      new QuestionAttachment({
-        questionId: exampleQuestion.id,
-        attachmentId: new UniqueEntityId(),
-      }),
-    ];
-    inMemoryQuestionAttachmentsRepository.items.push(...existingAttachments);
+    const existingAttachment = new QuestionAttachment({
+      questionId: exampleQuestion.id,
+      attachmentId: new UniqueEntityId(),
+    });
+    const removedAttachment = new QuestionAttachment({
+      questionId: exampleQuestion.id,
+      attachmentId: new UniqueEntityId(),
+    });
+    const newAttachment = new QuestionAttachment({
+      questionId: exampleQuestion.id,
+      attachmentId: new UniqueEntityId(),
+    });
+    inMemoryQuestionAttachmentsRepository.items.push(
+      ...[existingAttachment, removedAttachment],
+    );
     const newAttachmentIds = [
-      new UniqueEntityId().toString(),
-      existingAttachments[0]?.attachmentId.toString() ?? '',
+      existingAttachment.attachmentId.toString(),
+      newAttachment.attachmentId.toString() ?? '',
     ];
 
     const result = await sut.execute({
@@ -105,12 +109,12 @@ describe('Update Question', () => {
     expect(updatedQuestion.attachments.getRemovedItems()).toHaveLength(1);
     expect(
       updatedQuestion.attachments.getRemovedItems()[0]?.attachmentId.toString(),
-    ).toBe(existingAttachments[1]?.attachmentId.toString());
+    ).toBe(removedAttachment.attachmentId.toString());
     //? validate new attachments
     expect(updatedQuestion.attachments.getNewItems()).toHaveLength(1);
     expect(
       updatedQuestion.attachments.getNewItems()[0]?.attachmentId.toString(),
-    ).toBe(newAttachmentIds[0]);
+    ).toBe(newAttachment.attachmentId.toString());
   });
 
   it('should not be able to update a non existing question', async () => {
