@@ -1,12 +1,14 @@
+import { AggregateRoot } from '@/shared/domain/entities/aggregate-root';
 import { BaseEntity, Timestamps } from '@/shared/domain/entities/base-entity';
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id/index.js';
-import { Optional } from '@/types/optional.js';
-import { Slug } from './value-objects/slug/index.js';
-import { AggregateRoot } from '@/shared/domain/entities/aggregate-root.js';
+import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id/index';
+import { Optional } from '@/types/optional';
+import { QuestionAttachment } from './question-attachment';
+import { Slug } from './value-objects/slug/index';
 
 export interface QuestionProps {
   authorId: UniqueEntityId;
   bestAnswerId?: UniqueEntityId | undefined;
+  attachments: QuestionAttachment[];
   title: string;
   content: string;
   slug: Slug;
@@ -14,13 +16,15 @@ export interface QuestionProps {
 
 export class Question extends AggregateRoot<QuestionProps & Timestamps> {
   constructor(
-    props: Optional<QuestionProps, 'slug'> & Partial<Timestamps>,
+    props: Optional<QuestionProps, 'slug' | 'attachments'> &
+      Partial<Timestamps>,
     id?: UniqueEntityId,
   ) {
     const slug = props.slug || Slug.createFromText(props.title);
     const propsWithTimestamps = BaseEntity.setPropsTimestamps({
       ...props,
       slug,
+      attachments: props.attachments || [],
     });
     super(propsWithTimestamps, id);
   }
@@ -49,6 +53,10 @@ export class Question extends AggregateRoot<QuestionProps & Timestamps> {
     return this.content.substring(0, 120).trimEnd().concat('...');
   }
 
+  get attachments() {
+    return this.props.attachments;
+  }
+
   get createdAt() {
     return this.props.createdAt;
   }
@@ -70,6 +78,11 @@ export class Question extends AggregateRoot<QuestionProps & Timestamps> {
 
   set bestAnswerId(bestAnswerId: UniqueEntityId | undefined) {
     this.props.bestAnswerId = bestAnswerId;
+    this.touch();
+  }
+
+  set attachments(attachments: QuestionAttachment[]) {
+    this.props.attachments = attachments;
     this.touch();
   }
 }

@@ -2,7 +2,10 @@ import { Mock } from 'vitest';
 import { InMemoryQuestionRepository } from '@test/repositories/in-memory-question-repository';
 import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
 import { QuestionRepository } from '../repositories/question-repository';
-import { CreateQuestionUseCase } from './create-question';
+import {
+  CreateQuestionUseCase,
+  CreateQuestionUseCaseInput,
+} from './create-question';
 import { assertRepositorySpyCalled } from '@test/helpers/spy-helpers';
 
 let inMemoryQuestionRepository: QuestionRepository;
@@ -17,11 +20,12 @@ describe('Create Question', () => {
   });
 
   it('should create a question', async () => {
-    const input = {
+    const input: CreateQuestionUseCaseInput = {
       authorId: new UniqueEntityId().toString(),
       title: 'How to implement DDD in a forum application?',
       content:
         'I want to learn how to implement DDD in a forum application. Any tips?',
+      attachmentIds: [],
     };
 
     const output = await sut.execute(input);
@@ -34,5 +38,25 @@ describe('Create Question', () => {
     expect(output.question.content).toBe(input.content);
     expect(output.question.createdAt).toBeTruthy();
     expect(output.question.updatedAt).toBeTruthy();
+    expect(output.question.attachments).toEqual([]);
+  });
+
+  it('should create a question with attachments', async () => {
+    const input: CreateQuestionUseCaseInput = {
+      authorId: new UniqueEntityId().toString(),
+      title: 'How to implement DDD in a forum application?',
+      content:
+        'I want to learn how to implement DDD in a forum application. Any tips?',
+      attachmentIds: [new UniqueEntityId().toString()],
+    };
+
+    const output = await sut.execute(input);
+
+    assertRepositorySpyCalled(sutRepositorySpy);
+    expect(output.question).toBeTruthy();
+    expect(output.question.attachments).toHaveLength(1);
+    expect(output.question.attachments[0]?.attachmentId.toString()).toBe(
+      input.attachmentIds[0],
+    );
   });
 });

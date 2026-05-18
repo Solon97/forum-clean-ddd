@@ -27,6 +27,7 @@ describe('Create Answer', () => {
       questionId,
       instructorId,
       content: 'This is an answer to the question.',
+      attachmentIds: [],
     };
 
     const output: AnswerQuestionUseCaseOutput =
@@ -38,5 +39,33 @@ describe('Create Answer', () => {
     expect(output.answer.content).toBe(input.content);
     expect(output.answer.questionId.toString()).toBe(input.questionId);
     expect(output.answer.authorId.toString()).toBe(input.instructorId);
+    expect(output.answer.attachments).toEqual([]);
+  });
+
+  test('should be able to create an answer with attachments', async () => {
+    const questionId = new UniqueEntityId().toString();
+    const instructorId = new UniqueEntityId().toString();
+    const input: AnswerQuestionUseCaseInput = {
+      questionId,
+      instructorId,
+      content: 'This is an answer to the question.',
+      attachmentIds: [
+        new UniqueEntityId().toString(),
+        new UniqueEntityId().toString(),
+      ],
+    };
+
+    const output: AnswerQuestionUseCaseOutput =
+      await answerQuestionUseCase.execute(input);
+
+    assertRepositorySpyCalled(sutRepositorySpy);
+    expect(output).toBeTruthy();
+    expect(output.answer.attachments).toHaveLength(2);
+    expect(output.answer.attachments[0]?.attachmentId.toString()).toBe(
+      input.attachmentIds[0],
+    );
+    expect(output.answer.attachments[1]?.attachmentId.toString()).toBe(
+      input.attachmentIds[1],
+    );
   });
 });

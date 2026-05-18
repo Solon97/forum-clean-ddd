@@ -1,16 +1,23 @@
 import { BaseEntity, Timestamps } from '@/shared/domain/entities/base-entity';
 import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id/index';
+import { AnswerAttachment } from './answer-attachment';
+import { Optional } from '@/types/optional';
 
 export interface AnswerProps {
   questionId: UniqueEntityId;
   authorId: UniqueEntityId;
   content: string;
+  attachments: AnswerAttachment[];
 }
 
 export class Answer extends BaseEntity<AnswerProps & Timestamps> {
-  constructor(props: AnswerProps & Partial<Timestamps>, id?: UniqueEntityId) {
+  constructor(
+    props: Optional<AnswerProps, 'attachments'> & Partial<Timestamps>,
+    id?: UniqueEntityId,
+  ) {
     const propsWithTimestamps = BaseEntity.setPropsTimestamps(props);
-    super(propsWithTimestamps, id);
+
+    super({ ...propsWithTimestamps, attachments: props.attachments || [] }, id);
   }
 
   get content() {
@@ -29,6 +36,10 @@ export class Answer extends BaseEntity<AnswerProps & Timestamps> {
     return this.content.substring(0, 120).trimEnd().concat('...');
   }
 
+  get attachments() {
+    return this.props.attachments;
+  }
+
   get createdAt() {
     return this.props.createdAt;
   }
@@ -39,6 +50,11 @@ export class Answer extends BaseEntity<AnswerProps & Timestamps> {
 
   set content(content: string) {
     this.props.content = content;
+    this.touch();
+  }
+
+  set attachments(attachments: AnswerAttachment[]) {
+    this.props.attachments = attachments;
     this.touch();
   }
 }
