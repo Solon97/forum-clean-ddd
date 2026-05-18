@@ -1,6 +1,6 @@
-import { Answer } from '../entities/answer.js';
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id/index.js';
-import type { AnswerRepository } from '../repositories/answer-repository.js';
+import { Answer } from '../entities/answer';
+import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id/index';
+import type { AnswerRepository } from '../repositories/answer-repository';
 
 export interface AnswerQuestionUseCaseInput {
   questionId: string;

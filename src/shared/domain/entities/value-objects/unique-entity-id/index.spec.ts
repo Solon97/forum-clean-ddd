@@ -1,4 +1,4 @@
-import { UniqueEntityId } from './index.js';
+import { UniqueEntityId } from './index';
 
 test('should be able to create a unique entity ID', () => {
   const uniqueEntityId = new UniqueEntityId();

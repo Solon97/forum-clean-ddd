@@ -1,5 +1,5 @@
-import { PaginationParams } from '@/shared/domain/repositories/pagination-params.js';
-import type { Answer } from '../entities/answer.js';
+import { PaginationParams } from '@/shared/domain/repositories/pagination-params';
+import type { Answer } from '../entities/answer';
 
 export interface AnswerRepository {
   create(answer: Answer): Promise<void>;

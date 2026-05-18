@@ -1,4 +1,4 @@
-import { Slug } from './index.js';
+import { Slug } from './index';
 
 test('should be able to create a slug from a text', () => {
   const slug = Slug.createFromText('Hello World!');
