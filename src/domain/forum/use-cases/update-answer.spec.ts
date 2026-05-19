@@ -14,7 +14,7 @@ import { Mock } from 'vitest';
 import { AnswerAttachment } from '../entities/answer-attachment';
 import { AnswerAttachmentsRepository } from '../repositories/answer-attachments-repository';
 import { AnswerRepository } from '../repositories/answer-repository';
-import { ResourceNotFoundError } from './errors/resource-not-found';
+import { ResourceNotFoundError } from '../../../shared/domain/errors/resource-not-found';
 import { UpdateAnswerUseCase } from './update-answer';
 
 let inMemoryAnswerRepository: AnswerRepository;

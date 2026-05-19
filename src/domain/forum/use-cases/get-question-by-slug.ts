@@ -1,7 +1,7 @@
 import { Either, left, right } from 'fp-ts/lib/Either';
 import { Question } from '../entities/question';
 import { QuestionRepository } from '../repositories/question-repository';
-import { ResourceNotFoundError } from './errors/resource-not-found';
+import { ResourceNotFoundError } from '../../../shared/domain/errors/resource-not-found';
 
 interface GetQuestionBySlugUseCaseInput {
   slug: string;

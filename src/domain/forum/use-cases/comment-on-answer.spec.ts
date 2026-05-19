@@ -17,7 +17,7 @@ import {
   CommentOnAnswerUseCase,
   CommentOnAnswerUseCaseInput,
 } from './comment-on-answer';
-import { ResourceNotFoundError } from './errors/resource-not-found';
+import { ResourceNotFoundError } from '../../../shared/domain/errors/resource-not-found';
 
 let inMemoryAnswerRepository: AnswerRepository;
 let inMemoryAnswerCommentRepository: AnswerCommentRepository;

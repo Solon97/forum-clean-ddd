@@ -1,6 +1,6 @@
 import { Either, left, right } from 'fp-ts/lib/Either';
 import { AnswerRepository } from '../repositories/answer-repository';
-import { ResourceNotFoundError } from './errors/resource-not-found';
+import { ResourceNotFoundError } from '../../../shared/domain/errors/resource-not-found';
 import { AnswerAttachmentsRepository } from '../repositories/answer-attachments-repository';
 import { AnswerAttachmentList } from '../entities/answer-attachment-list';
 import { AnswerAttachment } from '../entities/answer-attachment';

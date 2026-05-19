@@ -2,8 +2,8 @@ import { Either, left, right } from 'fp-ts/lib/Either';
 import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id/index';
 import type { AnswerRepository } from '../repositories/answer-repository';
 import { QuestionRepository } from '../repositories/question-repository';
-import { NotAllowedError } from './errors/not-allowed';
-import { ResourceNotFoundError } from './errors/resource-not-found';
+import { NotAllowedError } from '../../../shared/domain/errors/not-allowed';
+import { ResourceNotFoundError } from '../../../shared/domain/errors/resource-not-found';
 
 export interface SetBestAnswerUseCaseInput {
   answerId: string;

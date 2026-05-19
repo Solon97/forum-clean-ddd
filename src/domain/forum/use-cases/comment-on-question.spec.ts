@@ -17,7 +17,7 @@ import {
   CommentOnQuestionUseCaseInput,
 } from './comment-on-question';
 import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
-import { ResourceNotFoundError } from './errors/resource-not-found';
+import { ResourceNotFoundError } from '../../../shared/domain/errors/resource-not-found';
 
 let inMemoryQuestionRepository: QuestionRepository;
 let inMemoryQuestionCommentRepository: QuestionCommentRepository;

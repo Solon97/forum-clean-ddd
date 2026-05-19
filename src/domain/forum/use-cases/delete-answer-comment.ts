@@ -1,6 +1,6 @@
 import { Either, left, right } from 'fp-ts/lib/Either';
 import { AnswerCommentRepository } from '../repositories/answer-comment-repository';
-import { ResourceNotFoundError } from './errors/resource-not-found';
+import { ResourceNotFoundError } from '../../../shared/domain/errors/resource-not-found';
 
 interface DeleteAnswerCommentUseCaseInput {
   commentId: string;
