@@ -4,6 +4,7 @@ import { InMemoryQuestionCommentRepository } from '@test/repositories/in-memory-
 import { Mock } from 'vitest';
 import { QuestionCommentRepository } from '../repositories/question-comment-repository';
 import { FetchQuestionCommentsUseCase } from './fetch-question-comments';
+import { assertEitherIsRight } from '@test/helpers/assert-either';
 
 let inMemoryQuestionCommentRepository: QuestionCommentRepository;
 let sut: FetchQuestionCommentsUseCase;
@@ -24,11 +25,12 @@ describe('Fetch Question Comments', () => {
   it('should be able to fetch question comments', async () => {
     const paginationParams: PaginationParams = { page: 1 };
 
-    await sut.execute({
+    const result = await sut.execute({
       paginationParams,
       questionId: 'question-id',
     });
 
+    assertEitherIsRight(result);
     assertRepositorySpyCalled(sutRepositorySpy, [
       paginationParams,
       'question-id',

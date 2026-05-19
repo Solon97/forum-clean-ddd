@@ -1,4 +1,5 @@
 import { PaginationParams } from '@/shared/domain/repositories/pagination-params';
+import { Either, right } from 'fp-ts/lib/Either';
 import { Question } from '../entities/question';
 import { QuestionRepository } from '../repositories/question-repository';
 
@@ -15,11 +16,13 @@ export class FetchRecentQuestionsUseCase {
 
   async execute({
     paginationParams,
-  }: FetchRecentQuestionsUseCaseInput): Promise<FetchRecentQuestionsUseCaseOutput> {
+  }: FetchRecentQuestionsUseCaseInput): Promise<
+    Either<never, FetchRecentQuestionsUseCaseOutput>
+  > {
     const questions =
       await this.questionRepository.findManyRecent(paginationParams);
-    return {
+    return right({
       questions,
-    };
+    });
   }
 }

@@ -1,11 +1,11 @@
 import { Mock } from 'vitest';
 import { assertRepositorySpyCalled } from '@test/helpers/spy-helpers';
+import { assertEitherIsRight } from '@test/helpers/assert-either';
 import { InMemoryAnswerRepository } from '@test/repositories/in-memory-answer-repository';
 import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
 import {
   AnswerQuestionUseCase,
   AnswerQuestionUseCaseInput,
-  AnswerQuestionUseCaseOutput,
 } from './answer-question';
 import type { AnswerRepository } from '@/domain/forum/repositories/answer-repository';
 
@@ -30,16 +30,16 @@ describe('Create Answer', () => {
       attachmentIds: [],
     };
 
-    const output: AnswerQuestionUseCaseOutput =
-      await answerQuestionUseCase.execute(input);
+    const result = await answerQuestionUseCase.execute(input);
 
+    assertEitherIsRight(result);
     assertRepositorySpyCalled(sutRepositorySpy);
-    expect(output).toBeTruthy();
-    expect(output.answer.id).toBeTruthy();
-    expect(output.answer.content).toBe(input.content);
-    expect(output.answer.questionId.toString()).toBe(input.questionId);
-    expect(output.answer.authorId.toString()).toBe(input.instructorId);
-    expect(output.answer.attachments).toEqual([]);
+    expect(result).toBeTruthy();
+    expect(result.right.answer.id).toBeTruthy();
+    expect(result.right.answer.content).toBe(input.content);
+    expect(result.right.answer.questionId.toString()).toBe(input.questionId);
+    expect(result.right.answer.authorId.toString()).toBe(input.instructorId);
+    expect(result.right.answer.attachments.getItems()).toEqual([]);
   });
 
   test('should be able to create an answer with attachments', async () => {
@@ -55,17 +55,17 @@ describe('Create Answer', () => {
       ],
     };
 
-    const output: AnswerQuestionUseCaseOutput =
-      await answerQuestionUseCase.execute(input);
+    const result = await answerQuestionUseCase.execute(input);
 
+    assertEitherIsRight(result);
     assertRepositorySpyCalled(sutRepositorySpy);
-    expect(output).toBeTruthy();
-    expect(output.answer.attachments.getItems()).toHaveLength(2);
+    expect(result).toBeTruthy();
+    expect(result.right.answer.attachments.getItems()).toHaveLength(2);
     expect(
-      output.answer.attachments.getItems()[0]?.attachmentId.toString(),
+      result.right.answer.attachments.getItems()[0]?.attachmentId.toString(),
     ).toBe(input.attachmentIds[0]);
     expect(
-      output.answer.attachments.getItems()[1]?.attachmentId.toString(),
+      result.right.answer.attachments.getItems()[1]?.attachmentId.toString(),
     ).toBe(input.attachmentIds[1]);
   });
 });

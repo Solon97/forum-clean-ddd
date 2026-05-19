@@ -1,4 +1,5 @@
 import { PaginationParams } from '@/shared/domain/repositories/pagination-params';
+import { Either, right } from 'fp-ts/lib/Either';
 import { AnswerComment } from '../entities/comment';
 import { AnswerCommentRepository } from '../repositories/answer-comment-repository';
 
@@ -17,14 +18,16 @@ export class FetchAnswerCommentsUseCase {
   async execute({
     paginationParams,
     answerId,
-  }: FetchAnswerCommentsUseCaseInput): Promise<FetchAnswerCommentsUseCaseOutput> {
+  }: FetchAnswerCommentsUseCaseInput): Promise<
+    Either<never, FetchAnswerCommentsUseCaseOutput>
+  > {
     const comments = await this.answerCommentRepository.findManyByAnswerId(
       paginationParams,
       answerId,
     );
 
-    return {
+    return right({
       comments,
-    };
+    });
   }
 }

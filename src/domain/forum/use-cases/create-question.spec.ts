@@ -7,6 +7,7 @@ import {
   CreateQuestionUseCaseInput,
 } from './create-question';
 import { assertRepositorySpyCalled } from '@test/helpers/spy-helpers';
+import { assertEitherIsRight } from '@test/helpers/assert-either';
 
 let inMemoryQuestionRepository: QuestionRepository;
 let sut: CreateQuestionUseCase;
@@ -28,17 +29,18 @@ describe('Create Question', () => {
       attachmentIds: [],
     };
 
-    const output = await sut.execute(input);
+    const result = await sut.execute(input);
 
+    assertEitherIsRight(result);
     assertRepositorySpyCalled(sutRepositorySpy);
-    expect(output.question).toBeTruthy();
-    expect(output.question.id).toBeTruthy();
-    expect(output.question.authorId.toString()).toBe(input.authorId);
-    expect(output.question.title).toBe(input.title);
-    expect(output.question.content).toBe(input.content);
-    expect(output.question.createdAt).toBeTruthy();
-    expect(output.question.updatedAt).toBeTruthy();
-    expect(output.question.attachments.currentItems).toEqual([]);
+    expect(result.right.question).toBeTruthy();
+    expect(result.right.question.id).toBeTruthy();
+    expect(result.right.question.authorId.toString()).toBe(input.authorId);
+    expect(result.right.question.title).toBe(input.title);
+    expect(result.right.question.content).toBe(input.content);
+    expect(result.right.question.createdAt).toBeTruthy();
+    expect(result.right.question.updatedAt).toBeTruthy();
+    expect(result.right.question.attachments.currentItems).toEqual([]);
   });
 
   it('should create a question with attachments', async () => {
@@ -50,13 +52,14 @@ describe('Create Question', () => {
       attachmentIds: [new UniqueEntityId().toString()],
     };
 
-    const output = await sut.execute(input);
+    const result = await sut.execute(input);
 
+    assertEitherIsRight(result);
     assertRepositorySpyCalled(sutRepositorySpy);
-    expect(output.question).toBeTruthy();
-    expect(output.question.attachments.currentItems).toHaveLength(1);
+    expect(result.right.question).toBeTruthy();
+    expect(result.right.question.attachments.currentItems).toHaveLength(1);
     expect(
-      output.question.attachments.currentItems[0]?.attachmentId.toString(),
+      result.right.question.attachments.currentItems[0]?.attachmentId.toString(),
     ).toBe(input.attachmentIds[0]);
   });
 });

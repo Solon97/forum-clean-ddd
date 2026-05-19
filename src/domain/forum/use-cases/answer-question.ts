@@ -3,6 +3,7 @@ import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-en
 import type { AnswerRepository } from '../repositories/answer-repository';
 import { AnswerAttachment } from '../entities/answer-attachment';
 import { AnswerAttachmentList } from '../entities/answer-attachment-list';
+import { Either, right } from 'fp-ts/lib/Either';
 
 export interface AnswerQuestionUseCaseInput {
   questionId: string;
@@ -23,7 +24,9 @@ export class AnswerQuestionUseCase {
     instructorId,
     content,
     attachmentIds,
-  }: AnswerQuestionUseCaseInput): Promise<AnswerQuestionUseCaseOutput> {
+  }: AnswerQuestionUseCaseInput): Promise<
+    Either<never, AnswerQuestionUseCaseOutput>
+  > {
     const answer = new Answer({
       content,
       questionId: new UniqueEntityId(questionId),
@@ -40,6 +43,6 @@ export class AnswerQuestionUseCase {
     answer.attachments = new AnswerAttachmentList(answerAttachments);
 
     await this.answerRepository.create(answer);
-    return { answer };
+    return right({ answer });
   }
 }

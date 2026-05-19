@@ -3,6 +3,7 @@ import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-en
 import { QuestionRepository } from '../repositories/question-repository';
 import { QuestionAttachment } from '../entities/question-attachment';
 import { QuestionAttachmentList } from '../entities/question-attachment-list';
+import { Either, right } from 'fp-ts/lib/Either';
 
 export interface CreateQuestionUseCaseInput {
   authorId: string;
@@ -23,7 +24,9 @@ export class CreateQuestionUseCase {
     title,
     content,
     attachmentIds,
-  }: CreateQuestionUseCaseInput): Promise<CreateQuestionUseCaseOutput> {
+  }: CreateQuestionUseCaseInput): Promise<
+    Either<never, CreateQuestionUseCaseOutput>
+  > {
     const question = new Question({
       authorId: new UniqueEntityId(authorId),
       title,
@@ -41,8 +44,8 @@ export class CreateQuestionUseCase {
 
     await this.questionRepository.create(question);
 
-    return {
+    return right({
       question,
-    };
+    });
   }
 }
