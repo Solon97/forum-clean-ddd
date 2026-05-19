@@ -1,8 +1,5 @@
 import { makeAnswer } from '@test/factories/make-answer';
-import {
-  assertRepositorySpyCalled,
-  assertRepositorySpyNotCalled,
-} from '@test/helpers/spy-helpers';
+import { assertSpyCalled, assertSpyNotCalled } from '@test/helpers/spy-helpers';
 import {
   assertEitherIsLeft,
   assertEitherIsRight,
@@ -52,7 +49,7 @@ describe('Set Best Answer', () => {
     });
 
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy, exampleQuestion);
+    assertSpyCalled(sutRepositorySpy, exampleQuestion);
     const updatedQuestion = await inMemoryQuestionRepository.findById(
       exampleQuestion.id.toString(),
     );
@@ -73,7 +70,7 @@ describe('Set Best Answer', () => {
     });
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 
   it('should not be able to set the best answer for a non existing question', async () => {
@@ -85,7 +82,7 @@ describe('Set Best Answer', () => {
     });
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 
   it('should not be able to set the best answer for a question from another author', async () => {
@@ -99,6 +96,6 @@ describe('Set Best Answer', () => {
     });
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(NotAllowedError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 });

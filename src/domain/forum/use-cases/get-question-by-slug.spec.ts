@@ -3,7 +3,7 @@ import { makeQuestion } from '@test/factories/make-question';
 import { InMemoryQuestionRepository } from '@test/repositories/in-memory-question-repository';
 import { QuestionRepository } from '../repositories/question-repository';
 import { GetQuestionBySlugUseCase } from './get-question-by-slug';
-import { assertRepositorySpyCalled } from '@test/helpers/spy-helpers';
+import { assertSpyCalled } from '@test/helpers/spy-helpers';
 import {
   assertEitherIsLeft,
   assertEitherIsRight,
@@ -30,7 +30,7 @@ describe('Get Question by Slug', () => {
     });
 
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy, exampleQuestion.slug.value);
+    assertSpyCalled(sutRepositorySpy, exampleQuestion.slug.value);
     expect(result.right.question).toEqual(exampleQuestion);
   });
 
@@ -41,6 +41,6 @@ describe('Get Question by Slug', () => {
 
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyCalled(sutRepositorySpy, 'invalid-slug');
+    assertSpyCalled(sutRepositorySpy, 'invalid-slug');
   });
 });

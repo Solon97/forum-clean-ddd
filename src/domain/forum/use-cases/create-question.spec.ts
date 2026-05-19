@@ -6,7 +6,7 @@ import {
   CreateQuestionUseCase,
   CreateQuestionUseCaseInput,
 } from './create-question';
-import { assertRepositorySpyCalled } from '@test/helpers/spy-helpers';
+import { assertSpyCalled } from '@test/helpers/spy-helpers';
 import { assertEitherIsRight } from '@test/helpers/assert-either';
 
 let inMemoryQuestionRepository: QuestionRepository;
@@ -32,7 +32,7 @@ describe('Create Question', () => {
     const result = await sut.execute(input);
 
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy);
+    assertSpyCalled(sutRepositorySpy);
     expect(result.right.question).toBeTruthy();
     expect(result.right.question.id).toBeTruthy();
     expect(result.right.question.authorId.toString()).toBe(input.authorId);
@@ -55,7 +55,7 @@ describe('Create Question', () => {
     const result = await sut.execute(input);
 
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy);
+    assertSpyCalled(sutRepositorySpy);
     expect(result.right.question).toBeTruthy();
     expect(result.right.question.attachments.currentItems).toHaveLength(1);
     expect(

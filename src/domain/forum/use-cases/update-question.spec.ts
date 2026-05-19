@@ -4,10 +4,7 @@ import {
   assertEitherIsLeft,
   assertEitherIsRight,
 } from '@test/helpers/assert-either';
-import {
-  assertRepositorySpyCalled,
-  assertRepositorySpyNotCalled,
-} from '@test/helpers/spy-helpers';
+import { assertSpyCalled, assertSpyNotCalled } from '@test/helpers/spy-helpers';
 import { InMemoryQuestionAttachmentsRepository } from '@test/repositories/in-memory-question-attachment-repository';
 import { InMemoryQuestionRepository } from '@test/repositories/in-memory-question-repository';
 import { Mock } from 'vitest';
@@ -51,7 +48,7 @@ describe('Update Question', () => {
       attachmentIds: [],
     });
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy, exampleQuestion);
+    assertSpyCalled(sutRepositorySpy, exampleQuestion);
     const updatedQuestion = await inMemoryQuestionRepository.findById(
       exampleQuestion.id.toString(),
     );
@@ -96,7 +93,7 @@ describe('Update Question', () => {
     });
 
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy, exampleQuestion);
+    assertSpyCalled(sutRepositorySpy, exampleQuestion);
 
     const updatedQuestion = result.right.question;
     //? validate current attachments
@@ -127,7 +124,7 @@ describe('Update Question', () => {
     });
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 
   it('should not be able to update a question from another author', async () => {
@@ -142,6 +139,6 @@ describe('Update Question', () => {
     });
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 });

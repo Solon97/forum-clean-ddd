@@ -1,6 +1,6 @@
 import { Mock } from 'vitest';
 
-export function assertRepositorySpyCalled(
+export function assertSpyCalled(
   spy: Mock,
   withArgs: unknown = expect.anything(),
   times = 1,
@@ -15,6 +15,6 @@ export function assertRepositorySpyCalled(
   }
 }
 
-export function assertRepositorySpyNotCalled(spy: Mock): void {
+export function assertSpyNotCalled(spy: Mock): void {
   expect(spy).not.toHaveBeenCalled();
 }

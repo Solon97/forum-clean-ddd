@@ -1,8 +1,5 @@
 import { makeQuestion } from '@test/factories/make-question';
-import {
-  assertRepositorySpyCalled,
-  assertRepositorySpyNotCalled,
-} from '@test/helpers/spy-helpers';
+import { assertSpyCalled, assertSpyNotCalled } from '@test/helpers/spy-helpers';
 import {
   assertEitherIsLeft,
   assertEitherIsRight,
@@ -46,7 +43,7 @@ describe('Comment On Question', () => {
 
     const result = await sut.execute(input);
 
-    assertRepositorySpyCalled(sutRepositorySpy);
+    assertSpyCalled(sutRepositorySpy);
     assertEitherIsRight(result);
     expect(result.right.comment.id).toBeTruthy();
     expect(result.right.comment.content).toBe('This is a comment');
@@ -64,6 +61,6 @@ describe('Comment On Question', () => {
     });
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 });

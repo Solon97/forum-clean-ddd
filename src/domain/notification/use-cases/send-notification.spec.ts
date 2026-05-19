@@ -1,6 +1,6 @@
 import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id';
 import { assertEitherIsRight } from '@test/helpers/assert-either';
-import { assertRepositorySpyCalled } from '@test/helpers/spy-helpers';
+import { assertSpyCalled } from '@test/helpers/spy-helpers';
 import { InMemoryNotificationRepository } from '@test/repositories/in-memory-notification-repository';
 import { Mock } from 'vitest';
 import { NotificationRepository } from '../repositories/notification-repository';
@@ -30,7 +30,7 @@ describe('Send Notification', () => {
     const result = await sut.execute(input);
 
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy);
+    assertSpyCalled(sutRepositorySpy);
     expect(result.right.notification).toBeTruthy();
     expect(result.right.notification.id).toBeTruthy();
     expect(result.right.notification.recipientId).toBe(input.recipientId);

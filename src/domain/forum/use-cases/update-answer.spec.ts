@@ -4,10 +4,7 @@ import {
   assertEitherIsLeft,
   assertEitherIsRight,
 } from '@test/helpers/assert-either';
-import {
-  assertRepositorySpyCalled,
-  assertRepositorySpyNotCalled,
-} from '@test/helpers/spy-helpers';
+import { assertSpyCalled, assertSpyNotCalled } from '@test/helpers/spy-helpers';
 import { InMemoryAnswerAttachmentsRepository } from '@test/repositories/in-memory-answer-attachment-repository';
 import { InMemoryAnswerRepository } from '@test/repositories/in-memory-answer-repository';
 import { Mock } from 'vitest';
@@ -50,7 +47,7 @@ describe('Update Answer', () => {
       attachmentIds: [],
     });
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy, exampleAnswer);
+    assertSpyCalled(sutRepositorySpy, exampleAnswer);
     const updatedAnswer = await inMemoryAnswerRepository.findById(
       exampleAnswer.id.toString(),
     );
@@ -94,7 +91,7 @@ describe('Update Answer', () => {
       attachmentIds: updatedAttachmentIds,
     });
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy, exampleAnswer);
+    assertSpyCalled(sutRepositorySpy, exampleAnswer);
     const updatedQuestion = result.right.answer;
     //? validate current attachments
     expect(updatedQuestion.attachments.getItems()).toHaveLength(2);
@@ -123,7 +120,7 @@ describe('Update Answer', () => {
     });
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 
   it('should not be able to update a answer from another author', async () => {
@@ -137,6 +134,6 @@ describe('Update Answer', () => {
     });
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 });

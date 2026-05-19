@@ -3,10 +3,7 @@ import {
   assertEitherIsLeft,
   assertEitherIsRight,
 } from '@test/helpers/assert-either';
-import {
-  assertRepositorySpyCalled,
-  assertRepositorySpyNotCalled,
-} from '@test/helpers/spy-helpers';
+import { assertSpyCalled, assertSpyNotCalled } from '@test/helpers/spy-helpers';
 import { InMemoryQuestionCommentRepository } from '@test/repositories/in-memory-question-comment-repository';
 import { Mock } from 'vitest';
 import { QuestionComment } from '../entities/comment';
@@ -40,7 +37,7 @@ describe('Delete Question Comment', () => {
     });
 
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy, exampleComment);
+    assertSpyCalled(sutRepositorySpy, exampleComment);
 
     const deletedComment = await inMemoryQuestionCommentRepository.findById(
       exampleComment.id.toString(),
@@ -57,7 +54,7 @@ describe('Delete Question Comment', () => {
 
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 
   it('should not be able to delete a question comment from another author', async () => {
@@ -76,6 +73,6 @@ describe('Delete Question Comment', () => {
 
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 });

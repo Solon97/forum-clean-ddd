@@ -1,8 +1,5 @@
 import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id';
-import {
-  assertRepositorySpyCalled,
-  assertRepositorySpyNotCalled,
-} from '@test/helpers/spy-helpers';
+import { assertSpyCalled, assertSpyNotCalled } from '@test/helpers/spy-helpers';
 import {
   assertEitherIsLeft,
   assertEitherIsRight,
@@ -40,7 +37,7 @@ describe('Delete Answer Comment', () => {
     });
 
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy, exampleComment);
+    assertSpyCalled(sutRepositorySpy, exampleComment);
 
     const deletedComment = await inMemoryAnswerCommentRepository.findById(
       exampleComment.id.toString(),
@@ -57,7 +54,7 @@ describe('Delete Answer Comment', () => {
 
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 
   it('should not be able to delete a answer comment from another author', async () => {
@@ -76,6 +73,6 @@ describe('Delete Answer Comment', () => {
 
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 });

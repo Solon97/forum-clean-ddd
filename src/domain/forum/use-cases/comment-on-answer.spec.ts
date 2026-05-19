@@ -4,10 +4,7 @@ import {
   assertEitherIsLeft,
   assertEitherIsRight,
 } from '@test/helpers/assert-either';
-import {
-  assertRepositorySpyCalled,
-  assertRepositorySpyNotCalled,
-} from '@test/helpers/spy-helpers';
+import { assertSpyCalled, assertSpyNotCalled } from '@test/helpers/spy-helpers';
 import { InMemoryAnswerCommentRepository } from '@test/repositories/in-memory-answer-comment-repository';
 import { InMemoryAnswerRepository } from '@test/repositories/in-memory-answer-repository';
 import { Mock } from 'vitest';
@@ -47,7 +44,7 @@ describe('Comment On Answer', () => {
     const result = await sut.execute(input);
 
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy);
+    assertSpyCalled(sutRepositorySpy);
     expect(result.right.comment.id).toBeTruthy();
     expect(result.right.comment.content).toBe('This is a comment');
     expect(result.right.comment.answerId.toString()).toBe(
@@ -65,6 +62,6 @@ describe('Comment On Answer', () => {
 
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 });

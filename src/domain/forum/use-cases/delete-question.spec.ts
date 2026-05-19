@@ -3,10 +3,7 @@ import {
   assertEitherIsLeft,
   assertEitherIsRight,
 } from '@test/helpers/assert-either';
-import {
-  assertRepositorySpyCalled,
-  assertRepositorySpyNotCalled,
-} from '@test/helpers/spy-helpers';
+import { assertSpyCalled, assertSpyNotCalled } from '@test/helpers/spy-helpers';
 import { InMemoryQuestionRepository } from '@test/repositories/in-memory-question-repository';
 import { Mock } from 'vitest';
 import { QuestionRepository } from '../repositories/question-repository';
@@ -32,7 +29,7 @@ describe('Delete Question', () => {
       authorId: exampleQuestion.authorId.toString(),
     });
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy, exampleQuestion);
+    assertSpyCalled(sutRepositorySpy, exampleQuestion);
     const deletedQuestion = await inMemoryQuestionRepository.findById(
       exampleQuestion.id.toString(),
     );
@@ -46,7 +43,7 @@ describe('Delete Question', () => {
     });
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 
   it('should not be able to delete a question from another author', async () => {
@@ -58,6 +55,6 @@ describe('Delete Question', () => {
     });
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 });

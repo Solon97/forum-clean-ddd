@@ -2,6 +2,8 @@ import { BaseEntity, Timestamps } from '@/shared/entities/base-entity';
 import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id/index';
 import { Optional } from '@/types/optional';
 import { AnswerAttachmentList } from './answer-attachment-list';
+import { AggregateRoot } from '@/shared/entities/aggregate-root';
+import { AnswerCreatedEvent } from './events/answer-created-event';
 
 export interface AnswerProps {
   questionId: UniqueEntityId;
@@ -10,7 +12,7 @@ export interface AnswerProps {
   attachments: AnswerAttachmentList;
 }
 
-export class Answer extends BaseEntity<AnswerProps & Timestamps> {
+export class Answer extends AggregateRoot<AnswerProps & Timestamps> {
   constructor(
     props: Optional<AnswerProps, 'attachments'> & Partial<Timestamps>,
     id?: UniqueEntityId,
@@ -24,6 +26,11 @@ export class Answer extends BaseEntity<AnswerProps & Timestamps> {
       },
       id,
     );
+
+    const isNewAnswer = !id;
+    if (isNewAnswer) {
+      this.addDomainEvent(new AnswerCreatedEvent(this));
+    }
   }
 
   get content() {

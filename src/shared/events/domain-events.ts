@@ -2,7 +2,9 @@ import { AggregateRoot } from '../entities/aggregate-root';
 import { UniqueEntityId } from '../entities/value-objects/unique-entity-id';
 import { DomainEvent } from './domain-event';
 
-type DomainEventCallback = (event: DomainEvent) => void;
+type DomainEventCallback<T extends DomainEvent = DomainEvent> = (
+  event: T,
+) => Promise<void>;
 
 export class DomainEvents {
   private static handlersMap: Record<string, DomainEventCallback[]> = {};
@@ -16,10 +18,12 @@ export class DomainEvents {
     }
   }
 
-  private static dispatchAggregateEvents(aggregate: AggregateRoot<object>) {
-    aggregate.domainEvents.forEach((event: DomainEvent) =>
-      this.dispatch(event),
-    );
+  private static async dispatchAggregateEvents(
+    aggregate: AggregateRoot<object>,
+  ) {
+    for (const event of aggregate.domainEvents) {
+      await this.dispatch(event);
+    }
   }
 
   private static removeAggregateFromMarkedDispatchList(
@@ -36,18 +40,18 @@ export class DomainEvents {
     return this.markedAggregates.find((aggregate) => aggregate.id.equals(id));
   }
 
-  public static dispatchEventsForAggregate(id: UniqueEntityId) {
+  public static async dispatchEventsForAggregate(id: UniqueEntityId) {
     const aggregate = this.findMarkedAggregateByID(id);
 
     if (aggregate) {
-      this.dispatchAggregateEvents(aggregate);
+      await this.dispatchAggregateEvents(aggregate);
       aggregate.clearEvents();
       this.removeAggregateFromMarkedDispatchList(aggregate);
     }
   }
 
-  public static register(
-    callback: DomainEventCallback,
+  public static register<T extends DomainEvent>(
+    callback: DomainEventCallback<T>,
     eventClassName: string,
   ) {
     const wasEventRegisteredBefore = eventClassName in this.handlersMap;
@@ -55,8 +59,7 @@ export class DomainEvents {
     if (!wasEventRegisteredBefore) {
       this.handlersMap[eventClassName] = [];
     }
-
-    this.handlersMap[eventClassName]?.push(callback);
+    this.handlersMap[eventClassName]?.push((event) => callback(event as T));
   }
 
   public static clearHandlers() {
@@ -67,7 +70,7 @@ export class DomainEvents {
     this.markedAggregates = [];
   }
 
-  private static dispatch(event: DomainEvent) {
+  private static async dispatch(event: DomainEvent) {
     const eventClassName: string = event.constructor.name;
 
     const isEventRegistered = eventClassName in this.handlersMap;
@@ -76,7 +79,7 @@ export class DomainEvents {
       const handlers = this.handlersMap[eventClassName] || [];
 
       for (const handler of handlers) {
-        handler(event);
+        await handler(event);
       }
     }
   }

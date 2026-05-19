@@ -1,4 +1,4 @@
-import { assertRepositorySpyCalled } from '@test/helpers/spy-helpers';
+import { assertSpyCalled } from '@test/helpers/spy-helpers';
 import { InMemoryQuestionRepository } from '@test/repositories/in-memory-question-repository';
 import { Mock } from 'vitest';
 import { QuestionRepository } from '../repositories/question-repository';
@@ -20,6 +20,6 @@ describe('Fetch Recent Questions', () => {
     const result = await sut.execute({ paginationParams: { page: 1 } });
 
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy, { page: 1 });
+    assertSpyCalled(sutRepositorySpy, { page: 1 });
   });
 });

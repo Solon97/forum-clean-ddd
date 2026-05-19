@@ -1,5 +1,5 @@
 import { PaginationParams } from '@/shared/repositories/pagination-params';
-import { assertRepositorySpyCalled } from '@test/helpers/spy-helpers';
+import { assertSpyCalled } from '@test/helpers/spy-helpers';
 import { InMemoryAnswerCommentRepository } from '@test/repositories/in-memory-answer-comment-repository';
 import { Mock } from 'vitest';
 import { AnswerCommentRepository } from '../repositories/answer-comment-repository';
@@ -31,9 +31,6 @@ describe('Fetch Answer Comments', () => {
     });
 
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy, [
-      paginationParams,
-      'answer-id',
-    ]);
+    assertSpyCalled(sutRepositorySpy, [paginationParams, 'answer-id']);
   });
 });

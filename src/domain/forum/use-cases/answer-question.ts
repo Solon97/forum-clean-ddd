@@ -4,10 +4,11 @@ import type { AnswerRepository } from '../repositories/answer-repository';
 import { AnswerAttachment } from '../entities/answer-attachment';
 import { AnswerAttachmentList } from '../entities/answer-attachment-list';
 import { Either, right } from 'fp-ts/lib/Either';
+import { DomainEvents } from '@/shared/events/domain-events';
 
 export interface AnswerQuestionUseCaseInput {
   questionId: string;
-  instructorId: string;
+  authorId: string;
   content: string;
   attachmentIds: string[];
 }
@@ -21,7 +22,7 @@ export class AnswerQuestionUseCase {
 
   async execute({
     questionId,
-    instructorId,
+    authorId,
     content,
     attachmentIds,
   }: AnswerQuestionUseCaseInput): Promise<
@@ -30,7 +31,7 @@ export class AnswerQuestionUseCase {
     const answer = new Answer({
       content,
       questionId: new UniqueEntityId(questionId),
-      authorId: new UniqueEntityId(instructorId),
+      authorId: new UniqueEntityId(authorId),
     });
 
     const answerAttachments = attachmentIds.map((attachmentId) => {
@@ -43,6 +44,7 @@ export class AnswerQuestionUseCase {
     answer.attachments = new AnswerAttachmentList(answerAttachments);
 
     await this.answerRepository.create(answer);
+    await DomainEvents.dispatchEventsForAggregate(answer.id);
     return right({ answer });
   }
 }

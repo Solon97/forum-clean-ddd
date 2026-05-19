@@ -4,10 +4,7 @@ import {
   assertEitherIsLeft,
   assertEitherIsRight,
 } from '@test/helpers/assert-either';
-import {
-  assertRepositorySpyCalled,
-  assertRepositorySpyNotCalled,
-} from '@test/helpers/spy-helpers';
+import { assertSpyCalled, assertSpyNotCalled } from '@test/helpers/spy-helpers';
 import { InMemoryNotificationRepository } from '@test/repositories/in-memory-notification-repository';
 import { Mock } from 'vitest';
 import { NotificationRepository } from '../repositories/notification-repository';
@@ -47,7 +44,7 @@ describe('Read Notification', () => {
     });
 
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy, notification);
+    assertSpyCalled(sutRepositorySpy, notification);
 
     const updatedNotification = await inMemoryNotificationRepository.findById(
       notification.id.toString(),
@@ -68,7 +65,7 @@ describe('Read Notification', () => {
 
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 
   it('should not be able to read a notification from another recipient', async () => {
@@ -87,6 +84,6 @@ describe('Read Notification', () => {
 
     assertEitherIsLeft(result);
     expect(result.left).toBeInstanceOf(ResourceNotFoundError);
-    assertRepositorySpyNotCalled(sutRepositorySpy);
+    assertSpyNotCalled(sutRepositorySpy);
   });
 });

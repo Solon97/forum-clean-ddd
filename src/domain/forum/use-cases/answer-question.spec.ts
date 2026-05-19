@@ -1,13 +1,13 @@
-import { Mock } from 'vitest';
-import { assertRepositorySpyCalled } from '@test/helpers/spy-helpers';
-import { assertEitherIsRight } from '@test/helpers/assert-either';
-import { InMemoryAnswerRepository } from '@test/repositories/in-memory-answer-repository';
+import type { AnswerRepository } from '@/domain/forum/repositories/answer-repository';
 import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id';
+import { assertEitherIsRight } from '@test/helpers/assert-either';
+import { assertSpyCalled } from '@test/helpers/spy-helpers';
+import { InMemoryAnswerRepository } from '@test/repositories/in-memory-answer-repository';
+import { Mock } from 'vitest';
 import {
   AnswerQuestionUseCase,
   AnswerQuestionUseCaseInput,
 } from './answer-question';
-import type { AnswerRepository } from '@/domain/forum/repositories/answer-repository';
 
 let inMemoryAnswerRepository: AnswerRepository;
 let answerQuestionUseCase: AnswerQuestionUseCase;
@@ -22,10 +22,10 @@ describe('Create Answer', () => {
 
   test('should be able to create an answer', async () => {
     const questionId = new UniqueEntityId().toString();
-    const instructorId = new UniqueEntityId().toString();
+    const authorId = new UniqueEntityId().toString();
     const input: AnswerQuestionUseCaseInput = {
       questionId,
-      instructorId,
+      authorId,
       content: 'This is an answer to the question.',
       attachmentIds: [],
     };
@@ -33,21 +33,21 @@ describe('Create Answer', () => {
     const result = await answerQuestionUseCase.execute(input);
 
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy);
+    assertSpyCalled(sutRepositorySpy);
     expect(result).toBeTruthy();
     expect(result.right.answer.id).toBeTruthy();
     expect(result.right.answer.content).toBe(input.content);
     expect(result.right.answer.questionId.toString()).toBe(input.questionId);
-    expect(result.right.answer.authorId.toString()).toBe(input.instructorId);
+    expect(result.right.answer.authorId.toString()).toBe(input.authorId);
     expect(result.right.answer.attachments.getItems()).toEqual([]);
   });
 
   test('should be able to create an answer with attachments', async () => {
     const questionId = new UniqueEntityId().toString();
-    const instructorId = new UniqueEntityId().toString();
+    const authorId = new UniqueEntityId().toString();
     const input: AnswerQuestionUseCaseInput = {
       questionId,
-      instructorId,
+      authorId,
       content: 'This is an answer to the question.',
       attachmentIds: [
         new UniqueEntityId().toString(),
@@ -58,7 +58,7 @@ describe('Create Answer', () => {
     const result = await answerQuestionUseCase.execute(input);
 
     assertEitherIsRight(result);
-    assertRepositorySpyCalled(sutRepositorySpy);
+    assertSpyCalled(sutRepositorySpy);
     expect(result).toBeTruthy();
     expect(result.right.answer.attachments.getItems()).toHaveLength(2);
     expect(
