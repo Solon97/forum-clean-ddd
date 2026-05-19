@@ -1,9 +1,10 @@
-import { Either, left, right } from 'fp-ts/lib/Either';
 import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id/index';
-import type { AnswerRepository } from '../repositories/answer-repository';
-import { QuestionRepository } from '../repositories/question-repository';
+import { DomainEvents } from '@/shared/events/domain-events';
+import { Either, left, right } from 'fp-ts/lib/Either';
 import { NotAllowedError } from '../../../shared/errors/not-allowed';
 import { ResourceNotFoundError } from '../../../shared/errors/resource-not-found';
+import type { AnswerRepository } from '../repositories/answer-repository';
+import { QuestionRepository } from '../repositories/question-repository';
 
 export interface SetBestAnswerUseCaseInput {
   answerId: string;
@@ -37,6 +38,7 @@ export class SetBestAnswerUseCase {
     }
     question.bestAnswerId = new UniqueEntityId(answerId);
     await this.questionRepository.update(question);
+    await DomainEvents.dispatchEventsForAggregate(question.id);
     return right(undefined);
   }
 }
