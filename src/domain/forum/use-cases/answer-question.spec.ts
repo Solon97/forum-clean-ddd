@@ -60,12 +60,12 @@ describe('Create Answer', () => {
 
     assertRepositorySpyCalled(sutRepositorySpy);
     expect(output).toBeTruthy();
-    expect(output.answer.attachments).toHaveLength(2);
-    expect(output.answer.attachments[0]?.attachmentId.toString()).toBe(
-      input.attachmentIds[0],
-    );
-    expect(output.answer.attachments[1]?.attachmentId.toString()).toBe(
-      input.attachmentIds[1],
-    );
+    expect(output.answer.attachments.getItems()).toHaveLength(2);
+    expect(
+      output.answer.attachments.getItems()[0]?.attachmentId.toString(),
+    ).toBe(input.attachmentIds[0]);
+    expect(
+      output.answer.attachments.getItems()[1]?.attachmentId.toString(),
+    ).toBe(input.attachmentIds[1]);
   });
 });

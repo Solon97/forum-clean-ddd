@@ -2,6 +2,7 @@ import { Answer } from '../entities/answer';
 import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id/index';
 import type { AnswerRepository } from '../repositories/answer-repository';
 import { AnswerAttachment } from '../entities/answer-attachment';
+import { AnswerAttachmentList } from '../entities/answer-attachment-list';
 
 export interface AnswerQuestionUseCaseInput {
   questionId: string;
@@ -36,7 +37,7 @@ export class AnswerQuestionUseCase {
       });
     });
 
-    answer.attachments = answerAttachments;
+    answer.attachments = new AnswerAttachmentList(answerAttachments);
 
     await this.answerRepository.create(answer);
     return { answer };
