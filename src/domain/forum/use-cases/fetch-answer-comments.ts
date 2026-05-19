@@ -1,4 +1,4 @@
-import { PaginationParams } from '@/shared/domain/repositories/pagination-params';
+import { PaginationParams } from '@/shared/repositories/pagination-params';
 import { Either, right } from 'fp-ts/lib/Either';
 import { AnswerComment } from '../entities/comment';
 import { AnswerCommentRepository } from '../repositories/answer-comment-repository';

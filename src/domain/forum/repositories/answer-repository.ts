@@ -1,4 +1,4 @@
-import { PaginationParams } from '@/shared/domain/repositories/pagination-params';
+import { PaginationParams } from '@/shared/repositories/pagination-params';
 import type { Answer } from '../entities/answer';
 
 export interface AnswerRepository {

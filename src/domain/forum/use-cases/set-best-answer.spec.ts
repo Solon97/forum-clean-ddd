@@ -14,8 +14,8 @@ import { AnswerRepository } from '../repositories/answer-repository';
 import { QuestionRepository } from '../repositories/question-repository';
 import { SetBestAnswerUseCase } from './set-best-answer';
 import { makeQuestion } from '@test/factories/make-question';
-import { NotAllowedError } from '../../../shared/domain/errors/not-allowed';
-import { ResourceNotFoundError } from '../../../shared/domain/errors/resource-not-found';
+import { NotAllowedError } from '../../../shared/errors/not-allowed';
+import { ResourceNotFoundError } from '../../../shared/errors/resource-not-found';
 
 let inMemoryQuestionRepository: QuestionRepository;
 let inMemoryAnswerRepository: AnswerRepository;

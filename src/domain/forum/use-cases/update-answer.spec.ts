@@ -1,4 +1,4 @@
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
+import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id';
 import { makeAnswer } from '@test/factories/make-answer';
 import {
   assertEitherIsLeft,
@@ -14,7 +14,7 @@ import { Mock } from 'vitest';
 import { AnswerAttachment } from '../entities/answer-attachment';
 import { AnswerAttachmentsRepository } from '../repositories/answer-attachments-repository';
 import { AnswerRepository } from '../repositories/answer-repository';
-import { ResourceNotFoundError } from '../../../shared/domain/errors/resource-not-found';
+import { ResourceNotFoundError } from '../../../shared/errors/resource-not-found';
 import { UpdateAnswerUseCase } from './update-answer';
 
 let inMemoryAnswerRepository: AnswerRepository;

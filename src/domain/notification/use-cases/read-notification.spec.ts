@@ -1,5 +1,5 @@
 import { Notification } from '@/domain/notification/entities/notification';
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
+import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id';
 import {
   assertEitherIsLeft,
   assertEitherIsRight,
@@ -11,7 +11,7 @@ import {
 import { InMemoryNotificationRepository } from '@test/repositories/in-memory-notification-repository';
 import { Mock } from 'vitest';
 import { NotificationRepository } from '../repositories/notification-repository';
-import { ResourceNotFoundError } from '@/shared/domain/errors/resource-not-found';
+import { ResourceNotFoundError } from '@/shared/errors/resource-not-found';
 import { ReadNotificationUseCase } from './read-notification';
 
 let inMemoryNotificationRepository: NotificationRepository;

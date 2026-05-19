@@ -1,7 +1,7 @@
 import { Either, left, right } from 'fp-ts/lib/Either';
 import { QuestionRepository } from '../repositories/question-repository';
-import { ResourceNotFoundError } from '../../../shared/domain/errors/resource-not-found';
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
+import { ResourceNotFoundError } from '../../../shared/errors/resource-not-found';
+import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id';
 import { QuestionAttachment } from '../entities/question-attachment';
 import { QuestionAttachmentList } from '../entities/question-attachment-list';
 import { QuestionAttachmentsRepository } from '../repositories/question-attachments-repository';

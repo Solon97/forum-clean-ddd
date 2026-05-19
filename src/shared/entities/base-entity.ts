@@ -31,4 +31,11 @@ export class BaseEntity<TProps extends object> {
     }
     this.props.updatedAt = new Date();
   }
+
+  equals(object: BaseEntity<TProps>): boolean {
+    if (this === object) {
+      return true;
+    }
+    return this.id.equals(object.id);
+  }
 }

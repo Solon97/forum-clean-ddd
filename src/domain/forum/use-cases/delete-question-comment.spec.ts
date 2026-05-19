@@ -1,4 +1,4 @@
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
+import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id';
 import {
   assertEitherIsLeft,
   assertEitherIsRight,
@@ -12,7 +12,7 @@ import { Mock } from 'vitest';
 import { QuestionComment } from '../entities/comment';
 import { QuestionCommentRepository } from '../repositories/question-comment-repository';
 import { DeleteQuestionCommentUseCase } from './delete-question-comment';
-import { ResourceNotFoundError } from '../../../shared/domain/errors/resource-not-found';
+import { ResourceNotFoundError } from '../../../shared/errors/resource-not-found';
 
 let inMemoryQuestionCommentRepository: QuestionCommentRepository;
 let sut: DeleteQuestionCommentUseCase;

@@ -1,4 +1,4 @@
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
+import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id';
 import { assertEitherIsRight } from '@test/helpers/assert-either';
 import { assertRepositorySpyCalled } from '@test/helpers/spy-helpers';
 import { InMemoryNotificationRepository } from '@test/repositories/in-memory-notification-repository';

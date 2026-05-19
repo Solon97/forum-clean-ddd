@@ -1,4 +1,4 @@
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
+import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id';
 import { makeAnswer } from '@test/factories/make-answer';
 import {
   assertEitherIsLeft,
@@ -17,7 +17,7 @@ import {
   CommentOnAnswerUseCase,
   CommentOnAnswerUseCaseInput,
 } from './comment-on-answer';
-import { ResourceNotFoundError } from '../../../shared/domain/errors/resource-not-found';
+import { ResourceNotFoundError } from '../../../shared/errors/resource-not-found';
 
 let inMemoryAnswerRepository: AnswerRepository;
 let inMemoryAnswerCommentRepository: AnswerCommentRepository;

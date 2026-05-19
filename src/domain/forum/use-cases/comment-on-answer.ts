@@ -1,8 +1,8 @@
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
+import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id';
 import { AnswerComment } from '../entities/comment';
 import { AnswerCommentRepository } from '../repositories/answer-comment-repository';
 import { AnswerRepository } from '../repositories/answer-repository';
-import { ResourceNotFoundError } from '../../../shared/domain/errors/resource-not-found';
+import { ResourceNotFoundError } from '../../../shared/errors/resource-not-found';
 import { Either, left, right } from 'fp-ts/lib/Either';
 
 export interface CommentOnAnswerUseCaseInput {

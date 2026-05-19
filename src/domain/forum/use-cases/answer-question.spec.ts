@@ -2,7 +2,7 @@ import { Mock } from 'vitest';
 import { assertRepositorySpyCalled } from '@test/helpers/spy-helpers';
 import { assertEitherIsRight } from '@test/helpers/assert-either';
 import { InMemoryAnswerRepository } from '@test/repositories/in-memory-answer-repository';
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
+import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id';
 import {
   AnswerQuestionUseCase,
   AnswerQuestionUseCaseInput,

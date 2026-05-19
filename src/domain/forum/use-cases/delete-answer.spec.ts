@@ -11,7 +11,7 @@ import { InMemoryAnswerRepository } from '@test/repositories/in-memory-answer-re
 import { Mock } from 'vitest';
 import { AnswerRepository } from '../repositories/answer-repository';
 import { DeleteAnswerUseCase } from './delete-answer';
-import { ResourceNotFoundError } from '../../../shared/domain/errors/resource-not-found';
+import { ResourceNotFoundError } from '../../../shared/errors/resource-not-found';
 
 let inMemoryAnswerRepository: AnswerRepository;
 let sut: DeleteAnswerUseCase;

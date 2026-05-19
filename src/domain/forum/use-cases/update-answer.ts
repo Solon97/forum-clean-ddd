@@ -1,10 +1,10 @@
 import { Either, left, right } from 'fp-ts/lib/Either';
 import { AnswerRepository } from '../repositories/answer-repository';
-import { ResourceNotFoundError } from '../../../shared/domain/errors/resource-not-found';
+import { ResourceNotFoundError } from '../../../shared/errors/resource-not-found';
 import { AnswerAttachmentsRepository } from '../repositories/answer-attachments-repository';
 import { AnswerAttachmentList } from '../entities/answer-attachment-list';
 import { AnswerAttachment } from '../entities/answer-attachment';
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
+import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id';
 import { Answer } from '../entities/answer';
 
 export interface UpdateAnswerUseCaseInput {

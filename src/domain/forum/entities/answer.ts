@@ -1,5 +1,5 @@
-import { BaseEntity, Timestamps } from '@/shared/domain/entities/base-entity';
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id/index';
+import { BaseEntity, Timestamps } from '@/shared/entities/base-entity';
+import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id/index';
 import { Optional } from '@/types/optional';
 import { AnswerAttachmentList } from './answer-attachment-list';
 

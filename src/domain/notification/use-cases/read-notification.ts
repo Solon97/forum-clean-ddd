@@ -1,7 +1,7 @@
 import { Either, left, right } from 'fp-ts/lib/Either';
 import { Notification } from '../entities/notification';
 import { NotificationRepository } from '../repositories/notification-repository';
-import { ResourceNotFoundError } from '@/shared/domain/errors/resource-not-found';
+import { ResourceNotFoundError } from '@/shared/errors/resource-not-found';
 
 export interface ReadNotificationUseCaseInput {
   recipientId: string;

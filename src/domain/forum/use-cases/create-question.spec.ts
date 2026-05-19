@@ -1,6 +1,6 @@
 import { Mock } from 'vitest';
 import { InMemoryQuestionRepository } from '@test/repositories/in-memory-question-repository';
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
+import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id';
 import { QuestionRepository } from '../repositories/question-repository';
 import {
   CreateQuestionUseCase,

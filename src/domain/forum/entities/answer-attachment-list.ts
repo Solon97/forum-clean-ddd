@@ -1,8 +1,8 @@
-import { WatchedList } from '@/shared/domain/entities/watched-list';
+import { WatchedList } from '@/shared/entities/watched-list';
 import { AnswerAttachment } from './answer-attachment';
 
 export class AnswerAttachmentList extends WatchedList<AnswerAttachment> {
   compareItems(a: AnswerAttachment, b: AnswerAttachment): boolean {
-    return a.attachmentId.toString() === b.attachmentId.toString();
+    return a.attachmentId.equals(b.attachmentId);
   }
 }

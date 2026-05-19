@@ -1,4 +1,4 @@
-import { PaginationParams } from '@/shared/domain/repositories/pagination-params';
+import { PaginationParams } from '@/shared/repositories/pagination-params';
 import { AnswerComment } from '../entities/comment';
 
 export interface AnswerCommentRepository {

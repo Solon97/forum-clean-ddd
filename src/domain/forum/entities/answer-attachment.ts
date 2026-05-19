@@ -1,5 +1,5 @@
-import { BaseEntity } from '@/shared/domain/entities/base-entity';
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id';
+import { BaseEntity } from '@/shared/entities/base-entity';
+import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id';
 
 export interface AnswerAttachmentProps {
   answerId: UniqueEntityId;

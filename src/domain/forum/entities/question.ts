@@ -1,6 +1,6 @@
-import { AggregateRoot } from '@/shared/domain/entities/aggregate-root';
-import { BaseEntity, Timestamps } from '@/shared/domain/entities/base-entity';
-import { UniqueEntityId } from '@/shared/domain/entities/value-objects/unique-entity-id/index';
+import { AggregateRoot } from '@/shared/entities/aggregate-root';
+import { BaseEntity, Timestamps } from '@/shared/entities/base-entity';
+import { UniqueEntityId } from '@/shared/entities/value-objects/unique-entity-id/index';
 import { Optional } from '@/types/optional';
 import { QuestionAttachmentList } from './question-attachment-list';
 import { Slug } from './value-objects/slug/index';

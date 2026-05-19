@@ -11,7 +11,7 @@ import { InMemoryQuestionRepository } from '@test/repositories/in-memory-questio
 import { Mock } from 'vitest';
 import { QuestionRepository } from '../repositories/question-repository';
 import { DeleteQuestionUseCase } from './delete-question';
-import { ResourceNotFoundError } from '../../../shared/domain/errors/resource-not-found';
+import { ResourceNotFoundError } from '../../../shared/errors/resource-not-found';
 
 let inMemoryQuestionRepository: QuestionRepository;
 let sut: DeleteQuestionUseCase;
