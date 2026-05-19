@@ -30,7 +30,7 @@ export class AnswerCreatedListener implements EventHandler {
 
     await this.sendNotification.execute({
       recipientId: question.authorId.toString(),
-      title: `Nova resposta em "${question.title.substring(0, 20).concat(question.title.length > 20 ? '...' : '')}"`,
+      title: `Nova resposta em "${question.excerptTitle}"`,
       content: answer.excerpt,
     });
   }

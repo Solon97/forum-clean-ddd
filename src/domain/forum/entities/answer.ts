@@ -46,7 +46,10 @@ export class Answer extends AggregateRoot<AnswerProps & Timestamps> {
   }
 
   get excerpt() {
-    return this.content.substring(0, 120).trimEnd().concat('...');
+    return this.content
+      .substring(0, 120)
+      .trimEnd()
+      .concat(this.content.length > 120 ? '...' : '');
   }
 
   get attachments() {
